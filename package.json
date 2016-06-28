@@ -1,0 +1,16 @@
+{
+  "title": "sigint",
+  "name": "sigint",
+  "version": "0.0.1",
+  "description": "A research assistant to help with online searches",
+  "main": "index.js",
+  "author": "Chris Ryan",
+  "engines": {
+    "firefox": ">=38.0a1",
+    "fennec": ">=38.0a1"
+  },
+  "license": "GPL",
+  "keywords": [
+    "jetpack"
+  ]
+}
