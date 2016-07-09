@@ -4,17 +4,23 @@ var self = require("sdk/self");
 // Define keyboard shortcuts for showing and hiding a custom panel.
 var { Hotkey } = require("sdk/hotkeys");
 
+var panel = require("sdk/panel").Panel({
+  width: 180,
+  height: 180,
+  contentURL: "https://en.wikipedia.org/w/index.php?title=Jetpack&useformat=mobile"
+});
+
 var showHotKey = Hotkey({
   combo: "accel-shift-o",
   onPress: function() {
     console.log("works.");
-    showMyPanel();
+    panel.show();
   }
 });
 var hideHotKey = Hotkey({
   combo: "accel-alt-shift-o",
   onPress: function() {
-    hideMyPanel();
+    panel.close();
   }
 });
 
