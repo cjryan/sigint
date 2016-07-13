@@ -9,7 +9,8 @@ var { Hotkey } = require("sdk/hotkeys");
 var panel = require("sdk/panel").Panel({
   width: 180,
   height: 180,
-  contentURL: "https://en.wikipedia.org/w/index.php?title=Jetpack&useformat=mobile"
+  contentURL: data.url("form.html"),
+  contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("form.js")]
 });
 
 //Modify the page to allow jquery, and link identification
@@ -21,8 +22,10 @@ pageMod.PageMod({
 var showHotKey = Hotkey({
   combo: "accel-shift-o",
   onPress: function() {
-    console.log("works.");
-    panel.show();
+    panel.show({
+      //This will show the panel under the addon button
+      position: button
+    });
   }
 });
 var hideHotKey = Hotkey({
@@ -31,6 +34,23 @@ var hideHotKey = Hotkey({
     panel.close();
   }
 });
+
+var buttons = require('sdk/ui/button/action');
+var tabs = require("sdk/tabs");
+
+var button = buttons.ActionButton({
+  id: "mozilla-link",
+  label: "Visit Mozilla",
+  icon: {
+    "16": "./icon-16.png",
+    "32": "./icon-32.png",
+  },
+  onClick: handleClick
+});
+
+function handleClick(state) {
+  tabs.open("http://www.mozilla.org/");
+}
 
 // a dummy function, to show how tests work.
 // to see how to test this function, look at test/test-index.js
