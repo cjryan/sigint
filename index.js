@@ -83,8 +83,8 @@ function readFile(input_file) {
     function onSuccess(array) {
       // Convert this array to a text
       output = decoder.decode(array);
-		  console.log("current topic read decode value: " + output);
-		  return output; 
+      console.log("current topic read decode value: " + output);
+      return output; 
   });
   console.log("current topic read return output value: " + output);
 }
