@@ -27,4 +27,3 @@ $(function() {
     self.port.emit("link_entered", link_metadata);
   });
 });
-

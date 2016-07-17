@@ -12,8 +12,10 @@ var { Hotkey } = require("sdk/hotkeys");
 var set_topic_panel = require("sdk/panel").Panel({
   width: 180,
   height: 180,
-  contentURL: data.url("form.html"),
-  contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("form.js")]
+  contentURL: data.url("set_topic.html"),
+  contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("set_topic.js")],
+  //Check if a topic is currently set or not
+  onShow: checkSetTopic
 });
 
 set_topic_panel.port.on("topic_entered", function(text) {
@@ -49,7 +51,7 @@ var showHotKey = Hotkey({
 var hideHotKey = Hotkey({
   combo: "accel-alt-shift-o",
   onPress: function() {
-    set_topic_panel.close();
+    set_topic_panel.hide();
   }
 });
 
@@ -84,7 +86,13 @@ function readFile(input_file) {
       // Convert this array to a text
       output = decoder.decode(array);
       return output; 
-  });
+    },
+    function onReject(read_rejection) {
+      //TODO: how to make this user-visible in the browser?
+      //will console.log be visible to the end user of the addon?
+      console.warn('Could not read file due to: ', read_rejection);
+    }
+  );
   return promise
 }
 
@@ -117,8 +125,8 @@ function linkMotherlodeCapture(link) {
 
   //TODO: Read in current topic, if exists. Otherwise, throw error to set current topic; maybe throw up a panel alert?
   var current_topic_path = pathFinder('current_topic_json');
-  let read_output_promise = readFile(current_topic_path);
-  let read_out = read_output_promise.then(
+  var read_output_promise = readFile(current_topic_path);
+  read_output_promise.then(
       function onFulfill(current_topic){
         link["curr_topic"] = current_topic;
         var json_out = JSON.stringify(link);
@@ -133,6 +141,20 @@ function linkMotherlodeCapture(link) {
 function topicWrite(topic) {
   var current_topic_path = pathFinder('current_topic_json');
   writeFile(topic, current_topic_path);
+}
+
+//Check to see if a topic is currently set
+function checkSetTopic() {
+  console.log("Checking for topic...");
+  //Wait for the panel to open
+  //TODO: error check if file actually exists
+  var check_current_topic_path = pathFinder('current_topic_json');
+  var current_topic_promise = readFile(check_current_topic_path);
+  current_topic_promise.then(
+      function onFulfill(read_topic) {
+        set_topic_panel.port.emit("curr_topic_contents", read_topic);          
+        console.log("Sent topic back...");
+  });
 }
 
 // a dummy function, to show how tests work.
