@@ -83,14 +83,12 @@ function readFile(input_file) {
     function onSuccess(array) {
       // Convert this array to a text
       output = decoder.decode(array);
-      console.log("current topic read decode value: " + output);
       return output; 
   });
-  console.log("current topic read return output value: " + output);
+  return promise
 }
 
 function linkMotherlodeWrite(link) {
-  console.log("link motherlode");
   //TODO: add error checking to all of this!!
 
   //TODO: what happens when a file already exists? open as append?
@@ -98,16 +96,15 @@ function linkMotherlodeWrite(link) {
 
   //TODO: Read in current topic, if exists. Otherwise, throw error to set current topic; maybe throw up a panel alert?
   var profile_dir = OS.Constants.Path.profileDir;
-  console.log("after profile dir " + profile_dir);
   var current_topic_path = OS.Path.join(profile_dir, 'current_topic.json');
-  console.log("after current_topic_path: " + current_topic_path);
-  var read_output = "";
-  read_output = readFile(current_topic_path);
-  console.log("current topic link writer: " + read_output);
+  let read_output_promise = readFile(current_topic_path);
+  let read_out = read_output_promise.then(
+      function onFulfill(current_topic){
+        link["curr_topic"] = current_topic;
+        return link;
+      });
 
-  link["curr_topic"] = read_output;
-
-  json_out = JSON.stringify(link)
+  var json_out = JSON.stringify(link);
 
   //Write to a file test
   // This encoder can be reused for several writes
