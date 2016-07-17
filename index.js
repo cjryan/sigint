@@ -106,7 +106,39 @@ function writeFile(data, path) {
   // buffer "file.txt.tmp".
   var tmp_path =  path + '.tmp';
   let promise = OS.File.writeAtomic(path, array,
-      {tmpPath: tmp_path, noOverwrite: true});
+      {tmpPath: tmp_path, noOverwrite: false});
+}
+
+function linkWriter(data, path) {
+	//First, check if a links motherlode file exists
+	let link_exist_promise = OS.File.exists(path);
+	link_exist_promise.then(
+		function onFulfill(exist) {
+			if (exist) {
+				//if it exists, get existing link file, parse as json
+				var linkfile_promise = readFile(path);
+				linkfile_promise.then(
+					function onFulfill(existing_links){
+						var links_obj = JSON.parse(existing_links);
+						//links_obj is the name of the parsed data object,
+						//links is the name of the json array created in the skeleton
+						links_obj.links.push(data);
+						var new_links_commit = JSON.stringify(links_obj);
+						writeFile(new_links_commit, path);
+						console.log(links_obj);
+				});
+			} else {
+				console.log("No file found, dishing one up now...");
+				var first_link = JSON.stringify(data);
+				skeleton = '{"links":[' + first_link + ']}'
+				console.log(skeleton);
+				writeFile(skeleton, path);
+			}
+		}, 
+		function onReject(link_write_reject) {
+			console.warn('Could not find file: ' + link_write_reject);
+		}
+	);
 }
 
 //default addon path
@@ -131,7 +163,7 @@ function linkMotherlodeCapture(link) {
         link["curr_topic"] = current_topic;
         var json_out = JSON.stringify(link);
         var link_motherlode_file_path = pathFinder('link_motherlode_json');
-        writeFile(json_out, link_motherlode_file_path);
+        linkWriter(json_out, link_motherlode_file_path);
       });
 }
 
