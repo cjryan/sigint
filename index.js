@@ -31,7 +31,7 @@ var pgmod = pageMod.PageMod({
   contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("link_click.js")],
   onAttach: function(worker) {
     worker.port.on("link_entered", function(link) {
-      linkMotherlodeWrite(link);
+      linkMotherlodeCapture(link);
     });
   }
 });
@@ -88,59 +88,51 @@ function readFile(input_file) {
   return promise
 }
 
-function linkMotherlodeWrite(link) {
+//write file
+function writeFile(data, path) {
+  // This encoder can be reused for several writes
+  let encoder = new TextEncoder();
+  // Convert the text to an array
+  let array = encoder.encode(data);
+  // Write the array atomically to "file.txt", using as temporary
+  // buffer "file.txt.tmp".
+  var tmp_path =  path + '.tmp';
+  let promise = OS.File.writeAtomic(path, array,
+      {tmpPath: tmp_path, noOverwrite: true});
+}
+
+//default addon path
+function pathFinder(filename) {
+  // Get user's profile directory
+  var profile_dir = OS.Constants.Path.profileDir;
+  var full_path = OS.Path.join(profile_dir, filename);
+  return full_path;
+}
+
+function linkMotherlodeCapture(link) {
   //TODO: add error checking to all of this!!
 
   //TODO: what happens when a file already exists? open as append?
   //https://developer.mozilla.org/en-US/docs/Mozilla/JavaScript_code_modules/OSFile.jsm/OS.File_for_the_main_thread#Example_Append_to_File
 
   //TODO: Read in current topic, if exists. Otherwise, throw error to set current topic; maybe throw up a panel alert?
-  var profile_dir = OS.Constants.Path.profileDir;
-  var current_topic_path = OS.Path.join(profile_dir, 'current_topic.json');
+  var current_topic_path = pathFinder('current_topic_json');
   let read_output_promise = readFile(current_topic_path);
   let read_out = read_output_promise.then(
       function onFulfill(current_topic){
         link["curr_topic"] = current_topic;
-        return link;
+        var json_out = JSON.stringify(link);
+        var link_motherlode_file_path = pathFinder('link_motherlode_json');
+        writeFile(json_out, link_motherlode_file_path);
       });
-
-  var json_out = JSON.stringify(link);
-
-  //Write to a file test
-  // This encoder can be reused for several writes
-  let encoder = new TextEncoder(); 
-  // Get user's profile directory
-  var link_motherlode_file = 'link_motherlode.json';
-  var link_motherlode_tmp_file = link_motherlode_file + '.tmp';
-  let link_motherlode_file_path = OS.Path.join(profile_dir, link_motherlode_file); 
-  let link_motherlode_file_tmp_path = OS.Path.join(profile_dir, link_motherlode_tmp_file); 
-  // Convert the text to an array
-  let array = encoder.encode(json_out);                   
-  // Write the array atomically to "file.txt", using as temporary
-  // buffer "file.txt.tmp".
-  let promise = OS.File.writeAtomic(link_motherlode_file_path, array,               
-      {tmpPath: link_motherlode_file_tmp_path, noOverwrite: true});
 }
 
 //create topic history
 //function topicHistWrite()
 
 function topicWrite(topic) {
-  //Write to a file test
-  // This encoder can be reused for several writes
-  let encoder = new TextEncoder(); 
-  // Get user's profile directory
-  var profile_dir = OS.Constants.Path.profileDir;
-  var current_topic_file = 'current_topic.json';
-  var current_topic_tmp_file = current_topic_file + '.tmp';
-  let current_topic_file_path = OS.Path.join(profile_dir, current_topic_file); 
-  let current_topic_file_tmp_path = OS.Path.join(profile_dir, current_topic_tmp_file); 
-  // Convert the text to an array
-  let array = encoder.encode(topic);                   
-  // Write the array atomically to "file.txt", using as temporary
-  // buffer "file.txt.tmp".
-  let promise = OS.File.writeAtomic(current_topic_file_path, array,               
-      {tmpPath: current_topic_file_tmp_path, noOverwrite: true});
+  var current_topic_path = pathFinder('current_topic_json');
+  writeFile(topic, current_topic_path);
 }
 
 // a dummy function, to show how tests work.
