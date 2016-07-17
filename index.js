@@ -23,6 +23,15 @@ set_topic_panel.port.on("topic_entered", function(text) {
   set_topic_panel.hide();
 });
 
+var link_overview_panel = require("sdk/panel").Panel({
+  width: 180,
+  height: 180,
+  contentURL: data.url("link_overview.html"),
+  contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("link_overview.js")],
+  onShow: getCurrentLinks
+});
+
+
 /* From MDN docs on port communication:
 https://developer.mozilla.org/en-US/Add-ons/SDK/Guides/Content_Scripts/using_port#Accessing_port_in_the_Add-on_Script
 So page-mod does not integrate the worker API directly: instead, each time a content script is attached to a page, the worker associated with the page is supplied to the page-mod in its onAttach function. By supplying a target for this function in the page-mod's constructor you can register to receive messages from the content script, and take a reference to the worker so as to emit messages to the content script.
@@ -38,7 +47,9 @@ var pgmod = pageMod.PageMod({
   }
 });
 
-var showHotKey = Hotkey({
+
+/* Set Topic Hotkeys*/
+var showSetTopicHotKey = Hotkey({
   combo: "accel-shift-o",
   onPress: function() {
     set_topic_panel.show({
@@ -48,10 +59,27 @@ var showHotKey = Hotkey({
   }
 });
 
-var hideHotKey = Hotkey({
+var hideShowTopicHotKey = Hotkey({
   combo: "accel-alt-shift-o",
   onPress: function() {
     set_topic_panel.hide();
+  }
+});
+
+/* Link Overview Hotkeys*/
+var showLinkOverHotKey = Hotkey({
+  combo: "accel-shift-l",
+  onPress: function() {
+    link_overview_panel.show({
+      position: button
+    });
+  }
+});
+
+var hideLinkOverHotKey = Hotkey({
+  combo: "accel-alt-shift-l",
+  onPress: function() {
+    link_overview_panel.hide();
   }
 });
 
@@ -128,9 +156,9 @@ function linkWriter(data, path) {
 						console.log(links_obj);
 				});
 			} else {
-				console.log("No file found, dishing one up now...");
+				console.log("No link motherlode file found, dishing one up now...");
 				var first_link = JSON.stringify(data);
-				skeleton = '{"links":[' + first_link + ']}'
+				var skeleton = '{"links":[' + first_link + ']}'
 				console.log(skeleton);
 				writeFile(skeleton, path);
 			}
@@ -161,7 +189,7 @@ function linkMotherlodeCapture(link) {
   read_output_promise.then(
       function onFulfill(current_topic){
         link["curr_topic"] = current_topic;
-        var json_out = JSON.stringify(link);
+        var json_out = link;
         var link_motherlode_file_path = pathFinder('link_motherlode_json');
         linkWriter(json_out, link_motherlode_file_path);
       });
@@ -187,6 +215,27 @@ function checkSetTopic() {
         set_topic_panel.port.emit("curr_topic_contents", read_topic);          
         console.log("Sent topic back...");
   });
+}
+
+//Return a list of links, to be displayed to the user
+function getCurrentLinks() {
+  motherlode_path = pathFinder('link_motherlode_json');
+	let link_exist_promise = OS.File.exists(motherlode_path);
+	link_exist_promise.then(
+		function onFulfill(moLoExist) {
+			if (moLoExist) {
+        var link_output_promise = readFile(motherlode_path);
+        link_output_promise.then(
+          function onFulfill(link_pile){
+            var all_links_obj = JSON.parse(link_pile); 
+              link_overview_panel.port.emit("send_link_pile", link_pile);
+          });
+      } else {
+        //TODO: Create a user-visible dialog that tells the user
+        //to create a topic and get going.
+        console.log("link motherlode not found.");
+      }
+    });
 }
 
 // a dummy function, to show how tests work.
