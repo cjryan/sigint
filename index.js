@@ -31,11 +31,17 @@ var link_overview_panel = require("sdk/panel").Panel({
   onShow: getCurrentLinks
 });
 
+link_overview_panel.port.on("link_annotation_data", function(data) {
+  //get data here and write it to the url? 
+  link_show_panel.show();
+  link_show_panel.port.emit("link_data", data);
+});
+
 var link_show_panel = require("sdk/panel").Panel({
   width: 180,
   height: 180,
-  contentURL: data.url("link_annotate.html"),
-  contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("link_annotate.js")],
+  contentURL: data.url("link_show.html"),
+  contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("link_show.js")],
   onShow: showLink
 });
 
