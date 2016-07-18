@@ -24,13 +24,20 @@ set_topic_panel.port.on("topic_entered", function(text) {
 });
 
 var link_overview_panel = require("sdk/panel").Panel({
-  width: 180,
-  height: 180,
+  width: 400,
+  height: 200,
   contentURL: data.url("link_overview.html"),
   contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("link_overview.js")],
   onShow: getCurrentLinks
 });
 
+var link_show_panel = require("sdk/panel").Panel({
+  width: 180,
+  height: 180,
+  contentURL: data.url("link_annotate.html"),
+  contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("link_annotate.js")],
+  onShow: showLink
+});
 
 /* From MDN docs on port communication:
 https://developer.mozilla.org/en-US/Add-ons/SDK/Guides/Content_Scripts/using_port#Accessing_port_in_the_Add-on_Script
@@ -236,6 +243,9 @@ function getCurrentLinks() {
         console.log("link motherlode not found.");
       }
     });
+}
+
+function showLink() {
 }
 
 // a dummy function, to show how tests work.
