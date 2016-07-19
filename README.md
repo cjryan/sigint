@@ -8,3 +8,12 @@ In doing research, it is oftentimes problematic to trace the source of a documen
 
 ##Context
 Many times, links are woven in as part of a surrounding text, [like so](https://github.com/cjryan/sigint). Long after that link has been bookmarked or written down, it is easy to forget why you saved that link or what you downloaded from it. sigint will allow you to save the surrounding text of a link, as part of your thread. 
+
+##Getting Started
+First, install the add-on. This can be done either by cloning this repository and building it out, using the Firefox [jpm utility](https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Getting_Started_(jpm)), or by downloading and installing the point release .xpi files on the Releases page (coming soon).
+
+Once the add-on is installed, you can begin to track a topic of your research. Press ctrl-shift-o (or command-shift-o on a Mac), and enter in a topic. From here, all of your links will be saved under this topic, until you change the topic.
+
+To save a link, press ctrl-alt, and left-click the link. This will preserve the link, and it's metadata (date/time, referring page, current page, link href attribute, and surrounding text). 
+
+To view your saved links, press ctrl-shift-l, which will bring up a list of links that you have saved to date under a given topic. From here, click on any one of the links to view its metadata, as well as edit it. You can also add notes in this new edit page to add context or thoughts to any particular link.
