@@ -32,7 +32,7 @@ var link_overview_panel = require("sdk/panel").Panel({
 });
 
 link_overview_panel.port.on("link_annotation_data", function(data) {
-  //get data here and write it to the url? 
+  //get data here and write it to the url?
   link_show_panel.show();
   link_show_panel.port.emit("link_data", data);
 });
@@ -103,7 +103,7 @@ var button = buttons.ActionButton({
     "16": "./icon-16.png",
     "32": "./icon-32.png",
   },
-  onClick: function() { 
+  onClick: function() {
     set_topic_panel.show({
       position: button
     });
@@ -119,14 +119,14 @@ var button = buttons.ActionButton({
 function readFile(input_file) {
   var output;
   // This decoder can be reused for several reads
-  let decoder = new TextDecoder();          
+  let decoder = new TextDecoder();
   // Read the complete file as an array
-  let promise = OS.File.read(input_file);   
+  let promise = OS.File.read(input_file);
   promise = promise.then(
     function onSuccess(array) {
       // Convert this array to a text
       output = decoder.decode(array);
-      return output; 
+      return output;
     },
     function onReject(read_rejection) {
       //TODO: how to make this user-visible in the browser?
@@ -151,35 +151,35 @@ function writeFile(data, path) {
 }
 
 function linkWriter(data, path) {
-	//First, check if a links motherlode file exists
-	let link_exist_promise = OS.File.exists(path);
-	link_exist_promise.then(
-		function onFulfill(exist) {
-			if (exist) {
-				//if it exists, get existing link file, parse as json
-				var linkfile_promise = readFile(path);
-				linkfile_promise.then(
-					function onFulfill(existing_links){
-						var links_obj = JSON.parse(existing_links);
-						//links_obj is the name of the parsed data object,
-						//links is the name of the json array created in the skeleton
-						links_obj.links.push(data);
-						var new_links_commit = JSON.stringify(links_obj);
-						writeFile(new_links_commit, path);
-						console.log(links_obj);
-				});
-			} else {
-				console.log("No link motherlode file found, dishing one up now...");
-				var first_link = JSON.stringify(data);
-				var skeleton = '{"links":[' + first_link + ']}'
-				console.log(skeleton);
-				writeFile(skeleton, path);
-			}
-		}, 
-		function onReject(link_write_reject) {
-			console.warn('Could not find file: ' + link_write_reject);
-		}
-	);
+  //First, check if a links motherlode file exists
+  let link_exist_promise = OS.File.exists(path);
+  link_exist_promise.then(
+    function onFulfill(exist) {
+      if (exist) {
+        //if it exists, get existing link file, parse as json
+        var linkfile_promise = readFile(path);
+        linkfile_promise.then(
+          function onFulfill(existing_links){
+            var links_obj = JSON.parse(existing_links);
+            //links_obj is the name of the parsed data object,
+            //links is the name of the json array created in the skeleton
+            links_obj.links.push(data);
+            var new_links_commit = JSON.stringify(links_obj);
+            writeFile(new_links_commit, path);
+            console.log(links_obj);
+        });
+      } else {
+        console.log("No link motherlode file found, dishing one up now...");
+        var first_link = JSON.stringify(data);
+        var skeleton = '{"links":[' + first_link + ']}'
+        console.log(skeleton);
+        writeFile(skeleton, path);
+      }
+    },
+    function onReject(link_write_reject) {
+      console.warn('Could not find file: ' + link_write_reject);
+    }
+  );
 }
 
 //default addon path
@@ -225,7 +225,7 @@ function checkSetTopic() {
   var current_topic_promise = readFile(check_current_topic_path);
   current_topic_promise.then(
       function onFulfill(read_topic) {
-        set_topic_panel.port.emit("curr_topic_contents", read_topic);          
+        set_topic_panel.port.emit("curr_topic_contents", read_topic);
         console.log("Sent topic back...");
   });
 }
@@ -233,14 +233,14 @@ function checkSetTopic() {
 //Return a list of links, to be displayed to the user
 function getCurrentLinks() {
   motherlode_path = pathFinder('link_motherlode_json');
-	let link_exist_promise = OS.File.exists(motherlode_path);
-	link_exist_promise.then(
-		function onFulfill(moLoExist) {
-			if (moLoExist) {
+  let link_exist_promise = OS.File.exists(motherlode_path);
+  link_exist_promise.then(
+    function onFulfill(moLoExist) {
+      if (moLoExist) {
         var link_output_promise = readFile(motherlode_path);
         link_output_promise.then(
           function onFulfill(link_pile){
-            var all_links_obj = JSON.parse(link_pile); 
+            var all_links_obj = JSON.parse(link_pile);
               link_overview_panel.port.emit("send_link_pile", link_pile);
           });
       } else {
