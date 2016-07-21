@@ -9,6 +9,8 @@ In doing research, it is oftentimes problematic to trace the source of a documen
 ##Context
 Many times, links are woven in as part of a surrounding text, [like so](https://github.com/cjryan/sigint). Long after that link has been bookmarked or written down, it is easy to forget why you saved that link or what you downloaded from it. sigint will allow you to save the surrounding text of a link, as part of your thread. 
 
+Similarly, tabs can be used as to-do lists, resulting in dozens or hundreds of open tabs. Sigint will help save your tabs, links, and research to reduce your browser load. 
+
 ##Getting Started
 First, install the add-on. This can be done either by cloning this repository and building it out, using the Firefox [jpm utility](https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Getting_Started_(jpm)), or by downloading and installing the point release .xpi files on the Releases page (coming soon).
 
