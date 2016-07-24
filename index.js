@@ -38,11 +38,16 @@ link_overview_panel.port.on("link_annotation_data", function(data) {
 });
 
 var link_show_panel = require("sdk/panel").Panel({
-  width: 180,
-  height: 180,
+  width: 400,
+  height: 400,
   contentURL: data.url("link_show.html"),
   contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("link_show.js")],
   onShow: showLink
+});
+
+link_show_panel.port.on("save_link_data", function(mod_link_data) {
+    link_show_panel.hide();
+    writeLinkEdits(mod_link_data);
 });
 
 /* From MDN docs on port communication:
@@ -117,7 +122,6 @@ var button = buttons.ActionButton({
 
 //read file
 function readFile(input_file) {
-  var output;
   // This decoder can be reused for several reads
   let decoder = new TextDecoder();
   // Read the complete file as an array
@@ -172,7 +176,6 @@ function linkWriter(data, path) {
         console.log("No link motherlode file found, dishing one up now...");
         var first_link = JSON.stringify(data);
         var skeleton = '{"links":[' + first_link + ']}'
-        console.log(skeleton);
         writeFile(skeleton, path);
       }
     },
@@ -236,20 +239,89 @@ function checkSetTopic() {
 function getCurrentLinks() {
   motherlode_path = pathFinder('link_motherlode_json');
   let link_exist_promise = OS.File.exists(motherlode_path);
-  link_exist_promise.then(
+  link_exist_promise = link_exist_promise.then(
     function onFulfill(moLoExist) {
       if (moLoExist) {
         var link_output_promise = readFile(motherlode_path);
         link_output_promise.then(
           function onFulfill(link_pile){
             var all_links_obj = JSON.parse(link_pile);
-              link_overview_panel.port.emit("send_link_pile", link_pile);
+            link_overview_panel.port.emit("send_link_pile", all_links_obj);
           });
       } else {
         //TODO: Create a user-visible dialog that tells the user
         //to create a topic and get going.
         console.log("link motherlode not found.");
       }
+    },
+    function onReject(reject_link_info) {
+      console.warn('Could not get current links: ' + reject_link_info);
+    });
+}
+
+//Found at
+//http://stackoverflow.com/questions/12462318/find-a-value-in-an-array-of-objects-in-javascript/12462387#12462387
+//TODO: Add error checking here, { else } should fail
+function linkIdSearch(Key, linkArray) {
+  for (var i=0; i < linkArray.length; i++) {
+    if (linkArray[i].id === Key) {
+      return linkArray[i];
+    }
+  }
+}
+
+function getLinkById(id) {
+//TODO:: Replace this whole block with getCurrentLinks, as it's identical
+  motherlode_path = pathFinder('link_motherlode_json');
+  var link_output_promise = readFile(motherlode_path);
+  let indiv_link_stanza_promise = link_output_promise.then(
+    function onFulfill(link_pile) {
+      var all_links_obj = JSON.parse(link_pile);
+      var indiv_link_stanza = linkIdSearch(id, all_links_obj["links"])
+      return indiv_link_stanza;
+    },
+    function onReject(reject_link_info) {
+      console.warn('Could not get current links: ' + reject_link_info);
+    });
+    return indiv_link_stanza_promise;
+}
+
+function writeLinkEdits(edits) {
+  var notes = edits["notes"];
+  var id = edits["id"];
+  let link_stanza_promise = getLinkById(id);
+  link_stanza_promise.then(
+    function onFulfill(stanza) {
+      stanza["notes"] = notes;
+      //Read in the linkmotherlode, find the stanza to replace,
+      //remove it from the link array, add the new stanza in it's place,
+      //write the modified file.
+      motherlode_path = pathFinder('link_motherlode_json');
+      var all_link_promise = readFile(motherlode_path);
+      all_link_promise.then(
+        function onFulfill(links) {
+          var all_links_obj = JSON.parse(links);
+          var linkArray = all_links_obj["links"];
+          var linkIndex;
+          for (var i=0; i < linkArray.length; i++) {
+            if (linkArray[i].id === id) {
+              linkIndex = linkArray.indexOf(linkArray[i]);
+            }
+            else {
+              console.warn("Not found.");
+            }
+          }
+          linkArray[linkIndex] = stanza;
+          var mod_link_obj = {"links":linkArray};
+          mod_link_obj = JSON.stringify(mod_link_obj);
+          writeFile(mod_link_obj, motherlode_path);
+        },
+        function onReject(reject_link_info) {
+          console.warn('Could not read file: ' + reject_link_info);
+        });
+    },
+    function onReject(reject_stanza_info) {
+      console.warn("Could not return stanza.");
     });
 }
 
