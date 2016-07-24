@@ -23,6 +23,7 @@ $(function() {
       ref_page = document.referrer;
       link_metadata["ref_page"] = ref_page;
       link_metadata["curr_time"] = current_time;
+      link_metadata["notes"] = "";
     }
     self.port.emit("link_entered", link_metadata);
   });
