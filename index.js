@@ -201,6 +201,8 @@ function linkMotherlodeCapture(link) {
   var read_output_promise = readFile(current_topic_path);
   read_output_promise.then(
       function onFulfill(current_topic){
+        //add a unique link identifier
+        link["id"] = Date.now();
         link["curr_topic"] = current_topic;
         var json_out = link;
         var link_motherlode_file_path = pathFinder('link_motherlode_json');
