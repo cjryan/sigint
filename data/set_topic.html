@@ -1,10 +1,14 @@
 <h3>Topic:</h3>
-<div id="current_topic">
+<div id="current_topic" style="display: none;">
   <b>Your current topic is: <span id="topic_contents"></span></b>
   <br />
+  <b>You can change the topic here:</b><br />
+  <input type="text" id="new_topic" style="width: 150px;"></input>
+  <button id="change_topic">Set New Topic</button>
 </div><!-- end current_topic -->
 
 <div id="set_current_topic">
+  <b>Please set a topic to start:</b><br />
   <input type="text" id="topic_name" style="width: 150px;"></input><br />
   <button id="set_topic">Set Topic</button>
 </div><!-- end set_current_topic -->
