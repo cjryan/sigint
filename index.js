@@ -103,8 +103,8 @@ var hideLinkOverHotKey = Hotkey({
 });
 
 var button = buttons.ActionButton({
-  id: "mozilla-link",
-  label: "Visit Mozilla",
+  id: "sigint-main-button",
+  label: "sigint",
   icon: {
     "16": "./icon-16.png",
     "32": "./icon-32.png",
@@ -214,6 +214,7 @@ function linkMotherlodeCapture(link) {
 function topicWrite(topic) {
   var current_topic_path = pathFinder('current_topic_json');
   writeFile(topic, current_topic_path);
+  topicHistWrite(topic);
 }
 
 //Check to see if a topic is currently set
@@ -230,6 +231,32 @@ function checkSetTopic() {
 
 //create topic history
 function topicHistWrite(topic_to_archive) {
+  //First, check if a topic history file already exists
+  var path = pathFinder('topic_hist_json');
+  let hist_exist_promise= OS.File.exists(path);
+  hist_exist_promise.then(
+    function onFulfill(exist) {
+      if (exist) {
+        //if it exists, get existing file, parse as json
+        var hist_read_promise = readFile(path);
+        hist_read_promise.then(
+          function onFulfill(existing_hist){
+            var hist_obj = JSON.parse(existing_hist);
+            //hist_obj is the name of the parsed data object,
+            //topic_history is the name of the json array created in the skeleton
+            hist_obj.topic_history.push(topic_to_archive);
+            var new_hist_commit = JSON.stringify(hist_obj);
+            writeFile(new_hist_commit, path);
+        });
+      } else {
+        console.log("No topic history file found, dishing one up now...");
+        var skeleton = '{"topic_history":["' + topic_to_archive + '"]}'
+        writeFile(skeleton, path);
+      }
+    },
+    function onReject(hist_write_reject) {
+      console.warn('Could not find file: ' + hist_write_reject);
+    });
 }
 
 //Return a list of links, to be displayed to the user
