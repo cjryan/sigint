@@ -61,10 +61,11 @@ var pgmod = pageMod.PageMod({
   onAttach: function(worker) {
     worker.port.on("link_entered", function(link) {
       linkMotherlodeCapture(link);
+      //Update Badge to indicate successful link click
+      button.badge += 1;
     });
   }
 });
-
 
 /* Set Topic Hotkeys*/
 var showSetTopicHotKey = Hotkey({
@@ -112,13 +113,9 @@ var button = buttons.ActionButton({
     set_topic_panel.show({
       position: button
     });
-  }
+  },
+  badge: 0
 });
-
-//OS.File.exists()
-//mkdir if doesn't exist
-//OS.File.makeDir() --> ignoreExisting flag
-//create file if doesn't exist
 
 //read file
 function readFile(input_file) {
@@ -213,9 +210,7 @@ function linkMotherlodeCapture(link) {
       });
 }
 
-//create topic history
-//function topicHistWrite()
-
+//Write current topic
 function topicWrite(topic) {
   var current_topic_path = pathFinder('current_topic_json');
   writeFile(topic, current_topic_path);
@@ -223,7 +218,6 @@ function topicWrite(topic) {
 
 //Check to see if a topic is currently set
 function checkSetTopic() {
-  console.log("Checking for topic...");
   //Wait for the panel to open
   //TODO: error check if file actually exists
   var check_current_topic_path = pathFinder('current_topic_json');
@@ -231,8 +225,11 @@ function checkSetTopic() {
   current_topic_promise.then(
       function onFulfill(read_topic) {
         set_topic_panel.port.emit("curr_topic_contents", read_topic);
-        console.log("Sent topic back...");
   });
+}
+
+//create topic history
+function topicHistWrite(topic_to_archive) {
 }
 
 //Return a list of links, to be displayed to the user
