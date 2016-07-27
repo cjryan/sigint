@@ -8,6 +8,7 @@ const {Cu} = require("chrome");
 const {TextDecoder, TextEncoder, OS} = Cu.import("resource://gre/modules/osfile.jsm", {});
 // Define keyboard shortcuts for showing and hiding a custom panel.
 var { Hotkey } = require("sdk/hotkeys");
+var tabs = require("sdk/tabs");
 
 var set_topic_panel = require("sdk/panel").Panel({
   width: 180,
@@ -86,7 +87,7 @@ var hideShowTopicHotKey = Hotkey({
 });
 
 /* Link Overview Hotkeys*/
-var showLinkOverHotKey = Hotkey({
+/*var showLinkOverHotKey = Hotkey({
   combo: "accel-shift-l",
   onPress: function() {
     link_overview_panel.show({
@@ -100,7 +101,30 @@ var hideLinkOverHotKey = Hotkey({
   onPress: function() {
     link_overview_panel.hide();
   }
+});*/
+
+var showLinkOverHotKey = Hotkey({
+  combo: "accel-shift-l",
+  onPress: openLinkOverview
 });
+
+function openLinkOverview() {
+  tabs.open({
+    url: data.url("link_overview.html"),
+    inBackground: false,
+    onReady: function(tab)
+    {
+      tab.attach({
+        contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("link_overview.js")],
+        onMessage: function(message)
+        {
+          // Message from content script, send a response?
+        }
+      });
+    }
+  });
+}
+
 
 var button = buttons.ActionButton({
   id: "sigint-main-button",
