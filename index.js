@@ -108,8 +108,10 @@ var showLinkOverHotKey = Hotkey({
   onPress: openLinkOverview
 });
 
+var link_list_worker;
+
 function openLinkOverview() {
-  tabs.open({
+  link_list_worker = tabs.open({
     url: data.url("link_overview.html"),
     inBackground: false,
     onReady: function(tab)
