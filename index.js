@@ -8,6 +8,7 @@ var { Hotkey } = require("sdk/hotkeys");
 const {Cu} = require("chrome");
 // To read & write content to file
 const {TextDecoder, TextEncoder, OS} = Cu.import("resource://gre/modules/osfile.jsm", {});
+var base64 = require("sdk/base64");
 
 var set_topic_panel = require("sdk/panel").Panel({
   width: 180,
@@ -44,6 +45,8 @@ So page-mod does not integrate the worker API directly: instead, each time a con
 var pgmod = pageMod.PageMod({
   include: "*",
   contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("link_click.js")],
+  //Load content scripts once all the content (DOM, JS, CSS, images) has been loaded, at the time the window.onload event fires
+  contentScriptWhen: "end",
   onAttach: function(worker) {
     worker.port.on("link_entered", function(link) {
       linkMotherlodeCapture(link);
@@ -63,7 +66,6 @@ lnkOverviewPgMod = pageMod.PageMod({
   contentScriptFile: [data.url("jquery-3.0.0.min.js"),data.url("link_overview.js")],
   onAttach: function onAttach(worker) {
     link_list_worker = worker;
-    //openLinkOverview();
     getCurrentLinks();
     worker.port.on("link_annotation_data", function(data) {
       link_show_panel.show();
@@ -197,7 +199,9 @@ function linkMotherlodeCapture(link) {
   read_output_promise.then(
       function onFulfill(current_topic){
         //add a unique link identifier
-        link["id"] = Date.now();
+        rand_num = Math.random();
+        var id = base64.encode(rand_num.toString());
+        link["id"] = id;
         link["curr_topic"] = current_topic;
         var json_out = link;
         var link_motherlode_file_path = pathFinder('link_motherlode_json');
@@ -325,9 +329,6 @@ function writeLinkEdits(edits) {
           for (var i=0; i < linkArray.length; i++) {
             if (linkArray[i].id === id) {
               linkIndex = linkArray.indexOf(linkArray[i]);
-            }
-            else {
-              console.warn("Not found.");
             }
           }
           linkArray[linkIndex] = stanza;
