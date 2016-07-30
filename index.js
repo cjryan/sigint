@@ -108,14 +108,17 @@ var showLinkOverHotKey = Hotkey({
   onPress: openLinkOverview
 });
 
+//This functionality below is documented here:
+//http://stackoverflow.com/questions/32046399/firefox-jpm-emit-to-tab-from-outside-the-tab-call/32047579#32047579
 var link_list_worker;
 
 function openLinkOverview() {
-  link_list_worker = tabs.open({
+  tabs.open({
     url: data.url("link_overview.html"),
     inBackground: false,
     onReady: function(tab)
     {
+      link_list_worker = tab;
       tab.attach({
         contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("link_overview.js")],
         onMessage: function(message)
@@ -126,7 +129,6 @@ function openLinkOverview() {
     }
   });
 }
-
 
 var button = buttons.ActionButton({
   id: "sigint-main-button",
