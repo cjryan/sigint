@@ -2,13 +2,12 @@ var self = require("sdk/self");
 var data = require("sdk/self").data;
 var buttons = require('sdk/ui/button/action');
 var pageMod = require("sdk/page-mod");
+var tabs = require("sdk/tabs");
+var { Hotkey } = require("sdk/hotkeys");
 //Add low level FF util to write to file
 const {Cu} = require("chrome");
 // To read & write content to file
 const {TextDecoder, TextEncoder, OS} = Cu.import("resource://gre/modules/osfile.jsm", {});
-// Define keyboard shortcuts for showing and hiding a custom panel.
-var { Hotkey } = require("sdk/hotkeys");
-var tabs = require("sdk/tabs");
 
 var set_topic_panel = require("sdk/panel").Panel({
   width: 180,
@@ -22,20 +21,6 @@ var set_topic_panel = require("sdk/panel").Panel({
 set_topic_panel.port.on("topic_entered", function(text) {
   topicWrite(text);
   set_topic_panel.hide();
-});
-
-var link_overview_panel = require("sdk/panel").Panel({
-  width: 400,
-  height: 200,
-  contentURL: data.url("link_overview.html"),
-  contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("link_overview.js")],
-  onShow: getCurrentLinks
-});
-
-link_overview_panel.port.on("link_annotation_data", function(data) {
-  //get data here and write it to the url?
-  link_show_panel.show();
-  link_show_panel.port.emit("link_data", data);
 });
 
 var link_show_panel = require("sdk/panel").Panel({
@@ -68,6 +53,25 @@ var pgmod = pageMod.PageMod({
   }
 });
 
+//This functionality below is documented here:
+//http://stackoverflow.com/questions/32046399/firefox-jpm-emit-to-tab-from-outside-the-tab-call/32047579#32047579
+
+var link_list_worker;
+
+lnkOverviewPgMod = pageMod.PageMod({
+  include: self.data.url("link_overview.html"),
+  contentScriptFile: [data.url("jquery-3.0.0.min.js"),data.url("link_overview.js")],
+  onAttach: function onAttach(worker) {
+    link_list_worker = worker;
+    //openLinkOverview();
+    getCurrentLinks();
+    worker.port.on("link_annotation_data", function(data) {
+      link_show_panel.show();
+      link_show_panel.port.emit("link_data", data);
+    });
+  }
+});
+
 /* Set Topic Hotkeys*/
 var showSetTopicHotKey = Hotkey({
   combo: "accel-shift-o",
@@ -86,49 +90,12 @@ var hideShowTopicHotKey = Hotkey({
   }
 });
 
-/* Link Overview Hotkeys*/
-/*var showLinkOverHotKey = Hotkey({
-  combo: "accel-shift-l",
-  onPress: function() {
-    link_overview_panel.show({
-      position: button
-    });
-  }
-});
-
-var hideLinkOverHotKey = Hotkey({
-  combo: "accel-alt-shift-l",
-  onPress: function() {
-    link_overview_panel.hide();
-  }
-});*/
-
 var showLinkOverHotKey = Hotkey({
   combo: "accel-shift-l",
-  onPress: openLinkOverview
+  onPress: function() {
+    tabs.open(self.data.url("link_overview.html"));
+  }
 });
-
-//This functionality below is documented here:
-//http://stackoverflow.com/questions/32046399/firefox-jpm-emit-to-tab-from-outside-the-tab-call/32047579#32047579
-var link_list_worker;
-
-function openLinkOverview() {
-  tabs.open({
-    url: data.url("link_overview.html"),
-    inBackground: false,
-    onReady: function(tab)
-    {
-      link_list_worker = tab;
-      tab.attach({
-        contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("link_overview.js")],
-        onMessage: function(message)
-        {
-          // Message from content script, send a response?
-        }
-      });
-    }
-  });
-}
 
 var button = buttons.ActionButton({
   id: "sigint-main-button",
@@ -298,7 +265,7 @@ function getCurrentLinks() {
         link_output_promise.then(
           function onFulfill(link_pile){
             var all_links_obj = JSON.parse(link_pile);
-            link_overview_panel.port.emit("send_link_pile", all_links_obj);
+            link_list_worker.port.emit("send_link_pile", all_links_obj);
           });
       } else {
         //TODO: Create a user-visible dialog that tells the user
