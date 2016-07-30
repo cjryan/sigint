@@ -24,7 +24,20 @@ $(function() {
       link_metadata["ref_page"] = ref_page;
       link_metadata["curr_time"] = current_time;
       link_metadata["notes"] = "";
+
+      if (link_text == undefined ||
+          link_text == "" ||
+          href_text == undefined ||
+          href_text == "" ||
+          surr_text == undefined ||
+          surr_text == "" ||
+          curr_page == undefined ||
+          curr_page == "" ||
+          ref_page == undefined ||
+          ref_page == "" ) {
+        alert("Some link fields were not populated, check the link in the Link Overview page (ctrl-shift-l)")
+      }
+      self.port.emit("link_entered", link_metadata);
     }
-    self.port.emit("link_entered", link_metadata);
   });
 });
