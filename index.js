@@ -267,15 +267,21 @@ function sortCurrentLinks(links_obj) {
     var header = all_links_array[i]["curr_topic"];
     var page = all_links_array[i]["curr_page"];
     if(!(header in sorted)) {
-      //In reality, do next round of sorting by current page
-      //before adding to sorted object
-      sorted[header] = [];
-      sorted[header].push(all_links_array[i])
+      sorted[header] = {};
+      if(!(page in sorted[header])) {
+        sorted[header][page] = [all_links_array[i]];
+      } else {
+        sorted[header][page].push(all_links_array[i])
+      }
     } else {
-      sorted[header].push(all_links_array[i])
+      if(!(page in sorted[header])) {
+        sorted[header][page] = [all_links_array[i]];
+      } else {
+        sorted[header][page].push(all_links_array[i])
+      }
     }
   }
-  console.log(sorted);
+  return sorted;
 }
 
 //Return a list of links, to be displayed to the user
