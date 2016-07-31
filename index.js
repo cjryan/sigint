@@ -258,6 +258,26 @@ function topicHistWrite(topic_to_archive) {
     });
 }
 
+//Sort links for display in the link overview page
+function sortCurrentLinks(links_obj) {
+  //first sort by topic, then by current site
+  var sorted = {};
+  var all_links_array = links_obj["links"];
+  for(var i=0; i< all_links_array.length; i++) {
+    var header = all_links_array[i]["curr_topic"];
+    var page = all_links_array[i]["curr_page"];
+    if(!(header in sorted)) {
+      //In reality, do next round of sorting by current page
+      //before adding to sorted object
+      sorted[header] = [];
+      sorted[header].push(all_links_array[i])
+    } else {
+      sorted[header].push(all_links_array[i])
+    }
+  }
+  console.log(sorted);
+}
+
 //Return a list of links, to be displayed to the user
 function getCurrentLinks() {
   motherlode_path = pathFinder('link_motherlode_json');
@@ -269,7 +289,9 @@ function getCurrentLinks() {
         link_output_promise.then(
           function onFulfill(link_pile){
             var all_links_obj = JSON.parse(link_pile);
-            link_list_worker.port.emit("send_link_pile", all_links_obj);
+            var sorted_links = sortCurrentLinks(all_links_obj);
+            //link_list_worker.port.emit("send_link_pile", all_links_obj);
+            link_list_worker.port.emit("send_link_pile", sorted_links);
           });
       } else {
         //TODO: Create a user-visible dialog that tells the user
