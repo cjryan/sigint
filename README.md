@@ -16,12 +16,14 @@ First, install the add-on. This can be done by cloning this repository and build
 
 Once you've installed jpm, and cloned/downloaded the repository, run the jpm utility in the cloned/extracted directory, and run ```jpm xpi```. This will create a .xpi file for you to point the Firefox Add-on page to.
 
-Once the add-on is installed, you can begin to track a topic of your research. Press ctrl-shift-o (or command-shift-o on a Mac), and enter in a topic. From here, all of your links will be saved under this topic, until you change the topic. Pressing ctrl-shift-o will let you see your current topic, or change it to a different one, depending on your research at the moment.
+Once the add-on is installed, you can begin to track a topic of your research. Press ctrl-shift-o (or command-shift-o on a Mac), and enter in a topic. From here, all of your links will be saved under this topic, until you change the topic. Pressing ```ctrl-shift-o``` will let you see your current topic; pressing ```ctrl-shift-o``` again will bring up a dialog to change it to a different one, depending on your research at the moment.
 
-To save a link, press ctrl-alt, and left-click the link at the same time. This will preserve the link, and it's metadata (date/time, referring page, current page, link href attribute, and surrounding text).
+Note! Do not be afraid to change your topic often; in fact, it is highly encouraged. Think of your topic as a Ctrl-S (Save) on a (Libre)Office document. Don't be afraid of being stuck on one monolithic topic - you can always return to your current one, but don't worry about branching out.
 
-In addition to saving links, you can also save highlighted text. First, left-click with your mouse and drag over some text in a page. With your left-mouse button still pressed, hold the 's' key.
+To save a link, press ```ctrl-alt```, and ```mouse left-click``` on the link at the same time. This will preserve the link, and its metadata (date/time, referring page, current page, link href attribute, and surrounding text).
+
+In addition to saving links, you can also save highlighted text. First, left-click with your mouse and drag over some text in a page. With your ```left-mouse button``` still pressed, hold the ```'s' key```.
 
 Once you've successfully "meta-clicked" a link, or highlighted/clicked/'s' some text, the red badge on the add-on button will increment by one. If the badge does not increment by one, it means the add-on did not successfully register the click event; please try again in this case.
 
-To view your saved links and highlights, press ctrl-shift-l, which will bring up a list of links and highlights that you have saved to date under a given topic. From here, click on any one of the links to view its metadata, as well as edit it. You can also add notes in this new edit page to add context or thoughts to any particular link.
+To view your saved links and highlights, press ```ctrl-shift-l```, which will bring up a list of links and highlights that you have saved to date under a given topic. From here, click on any one of the links to view its metadata, as well as edit it. You can also add notes in this new edit page to add context or thoughts to any particular link.
