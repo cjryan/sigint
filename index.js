@@ -53,6 +53,11 @@ var pgmod = pageMod.PageMod({
       //Update Badge to indicate successful link click
       button.badge += 1;
     });
+    worker.port.on("save_highlighted_text", function(text) {
+      linkMotherlodeCapture(text);
+      //Update Badge to indicate successful link click
+      button.badge += 1;
+    });
   }
 });
 
@@ -296,7 +301,6 @@ function getCurrentLinks() {
           function onFulfill(link_pile){
             var all_links_obj = JSON.parse(link_pile);
             var sorted_links = sortCurrentLinks(all_links_obj);
-            //link_list_worker.port.emit("send_link_pile", all_links_obj);
             link_list_worker.port.emit("send_link_pile", sorted_links);
           });
       } else {

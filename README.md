@@ -18,6 +18,8 @@ Once the add-on is installed, you can begin to track a topic of your research. P
 
 To save a link, press ctrl-alt, and left-click the link at the same time. This will preserve the link, and it's metadata (date/time, referring page, current page, link href attribute, and surrounding text).
 
-To view your collected pages/links for a given topic, press ctrl-shift-l, which will open a new tab for you to view, edit, and annotate your current pages/links.
+In addition to saving links, you can also save highlighted text. First, left-click with your mouse and drag over some text in a page. With your left-mouse button still pressed, hold the 's' key.
 
-To view your saved links, press ctrl-shift-l, which will bring up a list of links that you have saved to date under a given topic. From here, click on any one of the links to view its metadata, as well as edit it. You can also add notes in this new edit page to add context or thoughts to any particular link.
+Once you've successfully "meta-clicked" a link, or highlighted/clicked/'s' some text, the red badge on the add-on button will increment by one. If the badge does not increment by one, it means the add-on did not successfully register the click event; please try again in this case.
+
+To view your saved links and highlights, press ctrl-shift-l, which will bring up a list of links and highlights that you have saved to date under a given topic. From here, click on any one of the links to view its metadata, as well as edit it. You can also add notes in this new edit page to add context or thoughts to any particular link.
