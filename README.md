@@ -12,7 +12,9 @@ Many times, links are woven in as part of a surrounding text, [like so](https://
 Similarly, tabs can be used as to-do lists, resulting in dozens or hundreds of open tabs. Sigint will help save your tabs, links, and research to reduce your browser load.
 
 ##Getting Started
-First, install the add-on. This can be done either by cloning this repository and building it out, using the Firefox [jpm utility](https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Getting_Started_(jpm)), or by downloading and installing the point release .xpi files on the Releases page (coming soon).
+First, install the add-on. This can be done by cloning this repository and building it out, using the Firefox [jpm utility](https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Getting_Started_(jpm)). Please follow the 'Prerequisites' section of the link, and install the nodejs jpm utility. Once it's installed, either git clone this repository or download one of the point releases on the 'Releases' page.
+
+Once you've installed jpm, and cloned/downloaded the repository, run the jpm utility in the cloned/extracted directory, and run ```jpm xpi```. This will create a .xpi file for you to point the Firefox Add-on page to.
 
 Once the add-on is installed, you can begin to track a topic of your research. Press ctrl-shift-o (or command-shift-o on a Mac), and enter in a topic. From here, all of your links will be saved under this topic, until you change the topic. Pressing ctrl-shift-o will let you see your current topic, or change it to a different one, depending on your research at the moment.
 
