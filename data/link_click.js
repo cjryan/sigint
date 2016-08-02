@@ -1,4 +1,4 @@
-//http://stackoverflow.com/questions/3872498/jquery-how-to-catch-keydown-mouse-click-event/3872560#3872560
+//Click and mouse event capture: http://stackoverflow.com/a/3872560
 $(function() {
   $("a").click(function(event) {
     //create an object to store the link data
@@ -40,4 +40,82 @@ $(function() {
       self.port.emit("link_entered", link_metadata);
     }
   });
+});
+
+//Keypress and click: http://stackoverflow.com/a/30444534
+//Saving highlighted text: http://stackoverflow.com/a/15990778
+$(function() {
+  var ctrlPress = false;
+  var leftMouseClick = false;
+
+  //Keycode 83 below represents the 's' key
+  $(document).on({
+    keydown: function(e) {
+      if(e.which == 83) {
+        ctrlPress = true;
+      }
+      if (clickPress()) {
+        saveHighlightedText();
+        resetEventState();
+      }
+    },
+    keyup: function(e) {
+      if(e.which == 83) {
+        ctrlPress = false;
+      }
+    },
+    mousedown: function(e) {
+      if (e.which == 1) {
+        leftMouseClick = true;
+      }
+      if (clickPress()) {
+        saveHighlightedText();
+        resetEventState();
+      }
+    },
+    mouseup: function(e) {
+      if (e.which == 1) {
+        leftMouseClick = false;
+      }
+    }
+  });
+
+  function clickPress() {
+    return ctrlPress && leftMouseClick;
+  }
+
+  function resetEventState() {
+    ctrlPress = false;
+    leftMouseClick = false;
+  }
+
+  function saveHighlightedText() {
+    var text = "";
+    var link_metadata = {};
+    if (window.getSelection) {
+      text = window.getSelection().toString();
+    } else if (document.selection && document.selection.type != "Control") {
+      text = document.selection.createRange().text;
+    }
+
+    link_metadata["link_text"] = text
+    link_metadata["surr_text"] = window.getSelection().anchorNode.parentNode.innerHTML;
+    link_metadata["href_text"] = "User Highlighted Selection";
+    link_metadata["curr_page"] = window.location.href;
+    link_metadata["ref_page"] = document.referrer;
+    link_metadata["curr_time"] =  new Date($.now());
+    link_metadata["notes"] = "";
+
+    if (link_metadata["link_text"] == undefined ||
+        link_metadata["link_text"] == "" ||
+        link_metadata["surr_text"] == undefined ||
+        link_metadata["surr_text"] == "" ||
+        link_metadata["curr_page"] == undefined ||
+        link_metadata["curr_page"] == "" ||
+        link_metadata["ref_page"]== undefined ||
+        link_metadata["ref_page"]== "" ) {
+      alert("Some page fields were not populated, check the link in the Link Overview page (ctrl-shift-l)")
+    }
+    self.port.emit("save_highlighted_text", link_metadata);
+  }
 });
