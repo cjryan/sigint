@@ -2,7 +2,7 @@ self.port.on("send_link_pile", function sortLinks(link_pile) {
 
   //hasOwnProperty looks only for this object's properties, not the
   //built-in javascript prototype object metadata
-  var page_html;
+  var page_html = "";
   for (var topic in link_pile) {
     if (link_pile.hasOwnProperty(topic)) {
       var topic_header = "<h1>" + topic + "</h1>";
@@ -41,7 +41,11 @@ self.port.on("send_link_pile", function sortLinks(link_pile) {
         topic_header = topic_header + page_header;
       }
     }
-    page_html = page_html + topic_header;
+    if(page_html == "" || undefined) {
+      page_html = topic_header;
+    } else {
+      page_html = page_html + topic_header;
+    }
   }
 
   //Hide the first text, as now we have links to show:
