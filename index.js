@@ -79,6 +79,17 @@ lnkOverviewPgMod = pageMod.PageMod({
   }
 });
 
+var topic_graph_worker;
+
+graphPgMod = pageMod.PageMod({
+  include: self.data.url("link_graph.html"),
+  contentScriptFile: [data.url("jquery-3.0.0.min.js"),data.url("link_graph.js"),data.url("d3.v3.min.js")],
+  onAttach: function onAttach(worker) {
+    topic_graph_worker = worker;
+    graphRoutes();
+  }
+});
+
 /* Set Topic Hotkeys*/
 var showSetTopicHotKey = Hotkey({
   combo: "accel-shift-o",
@@ -100,7 +111,14 @@ var hideShowTopicHotKey = Hotkey({
 var showLinkOverHotKey = Hotkey({
   combo: "accel-shift-l",
   onPress: function() {
-    tabs.open(self.data.url("link_overview.html"));
+    tabs.open(data.url("link_overview.html"));
+  }
+});
+
+var showLinkOverHotKey = Hotkey({
+  combo: "accel-shift-g",
+  onPress: function() {
+    tabs.open(data.url("link_graph.html"));
   }
 });
 
@@ -190,6 +208,16 @@ function pathFinder(filename) {
   var profile_dir = OS.Constants.Path.profileDir;
   var full_path = OS.Path.join(profile_dir, filename);
   return full_path;
+}
+
+function getCurrentTopic() {
+  var current_topic_path = pathFinder('current_topic_json');
+  var read_output_promise = readFile(current_topic_path);
+  var current_topic = read_output_promise.then(
+    function onFulfill(current_topic){
+       return current_topic;
+    });
+  return current_topic;
 }
 
 function linkMotherlodeCapture(link) {
@@ -374,6 +402,35 @@ function writeLinkEdits(edits) {
     },
     function onReject(reject_stanza_info) {
       console.warn("Could not return stanza.");
+    });
+}
+
+function graphRoutes() {
+  motherlode_path = pathFinder('link_motherlode_json');
+  let link_exist_promise = OS.File.exists(motherlode_path);
+  link_exist_promise = link_exist_promise.then(
+    function onFulfill(moLoExist) {
+      if (moLoExist) {
+        var link_output_promise = readFile(motherlode_path);
+        link_output_promise.then(
+          function onFulfill(link_pile){
+            var all_links_obj = JSON.parse(link_pile);
+            var sorted_links = sortCurrentLinks(all_links_obj);
+            var current_topic_promise = getCurrentTopic();
+            current_topic_promise.then(
+              function onFulfill(current_topic) {
+                var send_array = [sorted_links, current_topic]
+                topic_graph_worker.port.emit("send_graph_data", send_array);
+              });
+          });
+      } else {
+        //TODO: Create a user-visible dialog that tells the user
+        //to create a topic and get going.
+        console.log("link motherlode not found.");
+      }
+    },
+    function onReject(reject_link_info) {
+      console.warn('Could not get current links: ' + reject_link_info);
     });
 }
 
