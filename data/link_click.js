@@ -14,7 +14,8 @@ $(function() {
       current_time = new Date($.now());
       link_text = $(this).text();
       link_metadata["link_text"] = link_text;
-      href_text = $(this).attr("href");
+      //hfref attribute similar to this: http://stackoverflow.com/a/2639218
+      href_text = $(this).get(0).href
       link_metadata["href_text"] = href_text;
       surr_text = $(this).parent().text();
       link_metadata["surr_text"] = surr_text;
