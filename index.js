@@ -206,8 +206,14 @@ function linkWriter(data, path) {
 function pathFinder(filename) {
   // Get user's profile directory
   var profile_dir = OS.Constants.Path.profileDir;
-  var full_path = OS.Path.join(profile_dir, filename);
-  return full_path;
+  //Create add-on data directory, if it doesn't exist already
+  var data_dir_promise = OS.File.makeDir(profile_dir + "extension-data/sigint/");
+  data_dir_promise.then(
+      function onFulfill(data_dir) {
+        var full_path = OS.Path.join(data_dir + filename);
+        return full_path;
+      });
+  return data_dir_promise;
 }
 
 function getCurrentTopic() {
