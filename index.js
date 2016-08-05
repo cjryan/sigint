@@ -10,6 +10,27 @@ const {Cu} = require("chrome");
 const {TextDecoder, TextEncoder, OS} = Cu.import("resource://gre/modules/osfile.jsm", {});
 var base64 = require("sdk/base64");
 
+
+/* Generate a working directory for the add-on
+ * so as not to make a mess of the user's profile directory
+ */
+
+function createWorkingDirectory() {
+  var profile_dir = OS.Constants.Path.profileDir;
+  //var addon_path = OS.Path.join(profile_dir + "/sigint");
+  var addon_path = OS.Path.join(profile_dir + "/sigint");
+  make_dir_promise = OS.File.makeDir(addon_path, { ignoreExisting: false });
+  make_dir_promise.then(
+      function onFulfill(create_dir) {
+        console.log("Successfully created: " + addon_path);
+      },
+      function onReject(reject_dir) {
+        console.warn("Could not create: " + reject_dir);
+      });
+}
+
+createWorkingDirectory();
+
 var set_topic_panel = require("sdk/panel").Panel({
   width: 180,
   height: 180,
@@ -205,8 +226,8 @@ function linkWriter(data, path) {
 //default addon path
 function pathFinder(filename) {
   // Get user's profile directory
-  var profile_dir = OS.Constants.Path.profileDir;
-  var full_path = OS.Path.join(profile_dir + filename);
+  var sigint_dir = OS.Constants.Path.profileDir + "/sigint/";
+  var full_path = OS.Path.join(sigint_dir + filename);
   return full_path;
 }
 
