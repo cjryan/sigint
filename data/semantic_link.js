@@ -1,6 +1,6 @@
 current_active_tab = "";
 self.port.on("current_tab_pile", function receiveTabs(tab_pile) {
-  options = ""
+  options = "<option value=''></option>";
   //array length -1, due to active tab as last element
   for(var i = 0; i < tab_pile.length - 1; i++) {
     var tab_id = Object.keys(tab_pile[i])[0];
