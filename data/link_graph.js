@@ -33,8 +33,12 @@ self.port.on("send_graph_data", function graphData(sorted_links) {
                 //Each link contains 2 nodes worth of information:
                 //Build out 2 nodes here, one ref_page -> curr_page,
                 //the other curr_page -> href_text
-                links.push({source: ref_page, target: curr_page, type: "licensing"});
-                links.push({source: curr_page, target: href_text, type: "licensing"});
+                if (href_text == "Semantic Link") {
+                  links.push({source: ref_page, target: curr_page, type: "resolved"});
+                } else {
+                  links.push({source: ref_page, target: curr_page, type: "licensing"});
+                  links.push({source: curr_page, target: href_text, type: "licensing"});
+                }
               }
             }
           }

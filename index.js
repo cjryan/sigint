@@ -88,7 +88,7 @@ var pgmod = pageMod.PageMod({
 var link_list_worker;
 
 lnkOverviewPgMod = pageMod.PageMod({
-  include: self.data.url("link_overview.html"),
+  include: data.url("link_overview.html"),
   contentScriptFile: [data.url("jquery-3.0.0.min.js"),data.url("link_overview.js")],
   onAttach: function onAttach(worker) {
     link_list_worker = worker;
@@ -103,11 +103,29 @@ lnkOverviewPgMod = pageMod.PageMod({
 var topic_graph_worker;
 
 graphPgMod = pageMod.PageMod({
-  include: self.data.url("link_graph.html"),
+  include: data.url("link_graph.html"),
   contentScriptFile: [data.url("jquery-3.0.0.min.js"),data.url("link_graph.js"),data.url("d3.v3.min.js")],
   onAttach: function onAttach(worker) {
     topic_graph_worker = worker;
     graphRoutes();
+  }
+});
+
+var semantic_link_worker;
+var active_tab = "";
+
+semanticPgMod = pageMod.PageMod({
+  include: data.url("semantic_link.html"),
+  contentStyleFile: data.url("select2.min.css"),
+  contentScriptFile: [data.url("jquery-3.0.0.min.js"),data.url("select2.full.min.js"),data.url("semantic_link.js")],
+  onAttach: function onAttach(worker) {
+    semantic_link_worker = worker;
+    createSemanticBridge();
+    worker.port.on("semantic_link_ref", function(semantic_data) {
+      linkMotherlodeCapture(semantic_data);
+      worker.port.emit("capture_alert");
+      button.badge += 1;
+    });
   }
 });
 
@@ -122,7 +140,7 @@ var showSetTopicHotKey = Hotkey({
   }
 });
 
-var hideShowTopicHotKey = Hotkey({
+var hideTopicHotKey = Hotkey({
   combo: "accel-alt-shift-o",
   onPress: function() {
     set_topic_panel.hide();
@@ -136,10 +154,19 @@ var showLinkOverHotKey = Hotkey({
   }
 });
 
-var showLinkOverHotKey = Hotkey({
+var showGraphHotKey = Hotkey({
   combo: "accel-shift-g",
   onPress: function() {
     tabs.open(data.url("link_graph.html"));
+  }
+});
+
+var showBridgeHotKey = Hotkey({
+  combo: "accel-shift-b",
+  onPress: function() {
+    //Immediately get the current page, where keypress was activated
+    active_tab = tabs.activeTab.url;
+    tabs.open(data.url("semantic_link.html"));
   }
 });
 
@@ -453,6 +480,22 @@ function graphRoutes() {
     function onReject(reject_link_info) {
       console.warn('Could not get current links: ' + reject_link_info);
     });
+}
+
+function createSemanticBridge() {
+  var current_tabs = getCurrentTabs();
+  current_tabs.push(active_tab);
+  semantic_link_worker.port.emit("current_tab_pile", current_tabs);
+}
+
+function getCurrentTabs() {
+  var tab_arr = []
+  for (let tab of tabs) {
+    var tab_obj = {};
+    tab_obj[tab.id] = tab.url;
+    tab_arr.push(tab_obj);
+  }
+  return tab_arr;
 }
 
 function showLink() {

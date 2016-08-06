@@ -99,7 +99,7 @@ $(function() {
       text = document.selection.createRange().text;
     }
 
-    link_metadata["link_text"] = text
+    link_metadata["link_text"] = text;
     link_metadata["surr_text"] = window.getSelection().anchorNode.parentNode.innerHTML;
     link_metadata["href_text"] = "User Highlighted Selection";
     link_metadata["curr_page"] = window.location.href;
