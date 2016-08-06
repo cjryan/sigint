@@ -121,6 +121,29 @@ semanticPgMod = pageMod.PageMod({
   onAttach: function onAttach(worker) {
     semantic_link_worker = worker;
     createSemanticBridge();
+
+    /* When the 'Text' button is clicked in the semantic bridge page,
+    * the following is executed: a new page is opened, which contains
+    * the url of the bridge reference. A user then selects text to be
+    * associated with the bridge page, and the resulting link is saved.
+    */
+    worker.port.on("retrieve_text", function(tab_url) {
+    var captured_text = "";
+    tabs.open({
+      url: tab_url,
+      onReady: function(tab) {
+        var text_worker = tab.attach({
+          contentScript: 'document.body.style.border = "5px solid red";',
+          contentScriptFile: [data.url("jquery-3.0.0.min.js"),data.url("semantic_text.js")]
+        });
+          text_worker.port.on("semantic_highlighted_text", function(text) {
+            worker.port.emit("send_back_text", text);
+          });
+        }
+      });
+    });
+
+    // Save the semantic link once the Save button is pressed.
     worker.port.on("semantic_link_ref", function(semantic_data) {
       linkMotherlodeCapture(semantic_data);
       worker.port.emit("capture_alert");

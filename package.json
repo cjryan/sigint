@@ -10,6 +10,12 @@
     "fennec": ">=38.0a1"
   },
   "license": "GPL",
+  "icon": {
+      "16": "data/icon-16.png",
+      "32": "data/icon-32.png",
+      "48": "data/icon-48.png",
+      "64": "data/icon-64.png"
+  },
   "keywords": [
     "jetpack"
   ]

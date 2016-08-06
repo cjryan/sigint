@@ -13,11 +13,19 @@ self.port.on("current_tab_pile", function receiveTabs(tab_pile) {
 });
 
 $(document).ready(function() {
-  var tab_val = "";
+  var tab_url = "";
+  var semantic_text = "";
   $(".select2-basic-single").select2();
   //TODO: create an alert if no change
   $("#tab_select").change(function() {
     tab_url = $(this).find(':selected').text();
+  });
+  $("#fetch_text").click(function() {
+    self.port.emit("retrieve_text", tab_url);
+    self.port.on("send_back_text", function(text){
+      $("#text_alert_box").html("Text captured.");
+      semantic_text = text;
+    });
   });
   $("#semantic_form_submit").click(function() {
     if (current_active_tab == tab_url) {
@@ -25,7 +33,11 @@ $(document).ready(function() {
         link_metadata = {};
 
         link_metadata["link_text"] = "";
-        link_metadata["surr_text"] = "";
+        if(semantic_text == "" ) {
+          link_metadata["surr_text"] = "";
+        } else {
+          link_metadata["surr_text"] = semantic_text;
+        }
         link_metadata["href_text"] = "Semantic Link";
         link_metadata["curr_page"] = current_active_tab;
         link_metadata["ref_page"] = tab_url;
@@ -34,6 +46,22 @@ $(document).ready(function() {
 
         self.port.emit("semantic_link_ref", link_metadata);
       }
+    } else {
+      link_metadata = {};
+
+      link_metadata["link_text"] = "";
+      if(semantic_text == "" ) {
+        link_metadata["surr_text"] = "";
+      } else {
+        link_metadata["surr_text"] = semantic_text;
+      }
+      link_metadata["href_text"] = "Semantic Link";
+      link_metadata["curr_page"] = current_active_tab;
+      link_metadata["ref_page"] = tab_url;
+      link_metadata["curr_time"] =  new Date($.now());
+      link_metadata["notes"] = "";
+
+      self.port.emit("semantic_link_ref", link_metadata);
     }
   });
 });
