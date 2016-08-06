@@ -21,19 +21,19 @@ $(document).ready(function() {
   });
   $("#semantic_form_submit").click(function() {
     if (current_active_tab == tab_url) {
-			if (confirm("The tab you are attempting to bridge is the same as the active tab, you probably want another. Continue anyway?")) {
-				link_metadata = {};
+      if (confirm("The tab you are attempting to bridge is the same as the active tab, you probably want another. Continue anyway?")) {
+        link_metadata = {};
 
-				link_metadata["link_text"] = "";
-				link_metadata["surr_text"] = "";
-				link_metadata["href_text"] = "Semantic Link";
-				link_metadata["curr_page"] = current_active_tab;
-				link_metadata["ref_page"] = tab_url;
-				link_metadata["curr_time"] =  new Date($.now());
-				link_metadata["notes"] = "";
+        link_metadata["link_text"] = "";
+        link_metadata["surr_text"] = "";
+        link_metadata["href_text"] = "Semantic Link";
+        link_metadata["curr_page"] = current_active_tab;
+        link_metadata["ref_page"] = tab_url;
+        link_metadata["curr_time"] =  new Date($.now());
+        link_metadata["notes"] = "";
 
-				self.port.emit("semantic_link_ref", link_metadata);
-			}
+        self.port.emit("semantic_link_ref", link_metadata);
+      }
     }
   });
 });
