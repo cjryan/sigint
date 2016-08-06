@@ -41,12 +41,12 @@ self.port.on("send_graph_data", function graphData(sorted_links) {
                   href_text = link_text.slice(0,30) + "...";
                 }
                 if (href_text == "Semantic Link") {
-                  links.push({source: ref_page, target: curr_page, type: "resolved"});
+                  links.push({source: ref_page, target: curr_page, type: "semantic_link"});
                 } else if (ref_page == ""){
-                  links.push({source: curr_page, target: href_text, type: "licensing"});
+                  links.push({source: curr_page, target: href_text, type: "normal_link"});
                 } else {
-                  links.push({source: ref_page, target: curr_page, type: "licensing"});
-                  links.push({source: curr_page, target: href_text, type: "licensing"});
+                  links.push({source: ref_page, target: curr_page, type: "normal_link"});
+                  links.push({source: curr_page, target: href_text, type: "normal_link"});
                 }
               }
             }
@@ -82,7 +82,7 @@ self.port.on("send_graph_data", function graphData(sorted_links) {
 
   // Per-type markers, as they don't inherit styles.
   svg.append("defs").selectAll("marker")
-      .data(["suit", "licensing", "resolved"])
+      .data(["grey_link", "normal_link", "semantic_link"])
     .enter().append("marker")
       .attr("id", function(d) { return d; })
       .attr("viewBox", "0 -5 10 10")
