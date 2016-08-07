@@ -26,7 +26,7 @@ In addition to saving links, you can also save highlighted text. First, left-cli
 
 Once you've successfully "meta-clicked" a link, or highlighted/clicked/'s' some text, the red badge on the add-on button will increment by one. If the badge does not increment by one, it means the add-on did not successfully register the click event; please try again in this case.
 
-To view your saved links and highlights, press ```ctrl-shift-l```, which will bring up a list of links and highlights that you have saved to date under a given topic. From here, click on any one of the links to view its metadata, as well as edit it. You can also add notes in this new edit page to add context or thoughts to any particular link.
+To view your saved links and highlights, press ```ctrl-shift-l```, which will bring up a list of links and highlights that you have saved to date under a given topic. From here, click on any one of the links to view its metadata, as well as edit it. You can also add notes in this new edit page to add context or thoughts to any particular link. At the current time, notes are also useful for recording if any files were downloaded from a particular link.
 
 A graph of your data is also available when you press ```ctrl-shift-g```. This will bring up a d3.js generated graph, which highlights a directional path that your research has taken you.
 
