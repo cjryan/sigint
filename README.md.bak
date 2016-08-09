@@ -1,7 +1,7 @@
 #sigint
 A research assistant to help with online searches. This plugin was created to assist in Soviet history research and early US overflights of the Soviet Union, (ostensibly to gather information, particularly signals/electronic information), therefore the name SIGINT (Signals Intelligence) was chosen.
 
-Far from being bound to just history research, you can use sigint for all of your online thought-keeping needs.
+Far from being bound to just history reasearch, you can use sigint for all of your online thought-keeping needs.
 
 ##Follow the trail
 In doing research, it is oftentimes problematic to trace the source of a document, a note, an anecdote, or a bit of information after some time has passed. With sigint, you can create a project, and keep track of your research thread, from inception to closure. You can also create tags to keep track of your current progress.
@@ -32,7 +32,7 @@ In addition to saving links, you can also save highlighted text. First, left-cli
 At times, you may navigate away from your current thread, only to realize a page you find yourself on is related to a previous one. You can create a 'semantic link' at this point. To do so, press ```ctrl-shift-b```, which will bring you to a Semantic Link page. Once here, find a previous page you wish to associate with, from a list of active tabs (you may either use the drop-down, or the search bar provided in the drop-down). There is also a 'Fetch Text' button, which will allow you to visit the previous page, and select relevant text to save with your semantic link. Once you select a previous tab, a semantic link will be created between your current page, and a previous one. This is indicated by a dotted line in the graph.
 
 ###Capturing information
-Sometimes, when performing one of the above actions to capture information, a warning pop-up may arise. This simply means that some information was not present in the link or text; for example, you may start a topic, and directly navigate to a new page, with no 'referral' page (i.e., you did not arrive on that page via a link)). In this case, the 'referral' link metadata is not populated, and the warning arises. This is not a problem normally, and can be viewed in the Link Overview page to make sure the relevant data was captured. Similarly, you may click on an image-link, and some data may not be populated as well. Be sure to verify what you need in the Link Overview page.
+Sometimes, when performing one of the above actions to capture information, a warning popup may arise. This simply means that some information was not present in the link or text; for example, you may start a topic, and directly navigate to a new page, with no 'referral' page (i.e., you did not arrive on that page via a link)). In this case, the 'referral' link metadata is not populated, and the warning arises. This is not a problem normally, and can be viewed in the Link Overview page to make sure the relevant data was captured. Similarly, you may click on an image-link, and some data may not be populated as well. Be sure to verify what you need in the Link Overview page.
 
 ###The badge
 Once you've successfully "meta-clicked" a link, highlighted/clicked/'s' some text, or created a semantic link, the red badge on the add-on button will increment by one. If the badge does not increment by one, it means the add-on did not successfully register the click event; please try again in this case.
