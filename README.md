@@ -3,6 +3,8 @@ A research assistant to help with online searches. This plugin was created to as
 
 Far from being bound to just history research, you can use sigint for all of your online thought-keeping needs.
 
+One of the chief goals of sigint is to be as unobtrusive as possible. The workflow outlined below is designed to keep you focused on your research, and allow you to save information as part of the course of that research. Once you reach a point to stop and analyze your information, sigint also provides the tools to help you collate and view your data.
+
 ##Follow the trail
 In doing research, it is oftentimes problematic to trace the source of a document, a note, an anecdote, or a bit of information after some time has passed. With sigint, you can create a project, and keep track of your research thread, from inception to closure. You can also create tags to keep track of your current progress.
 
