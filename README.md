@@ -22,6 +22,8 @@ Once you've installed jpm, and cloned/downloaded the repository, run the jpm uti
 ###Create a topic
 Once the add-on is installed, you can begin to track a topic of your research. Press ctrl-shift-o (or command-shift-o on a Mac), and enter in a topic. From here, all of your links will be saved under this topic, until you change the topic. Pressing ```ctrl-shift-o``` will let you see your current topic; pressing ```ctrl-shift-o``` again will bring up a dialog to change it to a different one, depending on your research at the moment.
 
+You can also add an optional description to your topic, which may be useful in recording your thoughts, or noting a starting point in your research (i.e. you're reading one site or paper, which triggers an idea, and kick-starts your search for this topic; you may want to record that thought pattern here). The whole idea of sigint is to preserve as much information surrounding your research as possible, including where your topics came from.
+
 Note! Do not be afraid to change your topic often; in fact, it is highly encouraged. Think of your topic as a Ctrl-S (Save) on a (Libre)Office document. Don't be afraid of being stuck on one monolithic topic - you can always return to your current one, but don't worry about branching out.
 
 ###Capturing a link
