@@ -31,20 +31,6 @@ function createWorkingDirectory() {
 
 createWorkingDirectory();
 
-var set_topic_panel = require("sdk/panel").Panel({
-  width: 180,
-  height: 180,
-  contentURL: data.url("set_topic.html"),
-  contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("set_topic.js")],
-  //Check if a topic is currently set or not
-  onShow: checkSetTopic
-});
-
-set_topic_panel.port.on("topic_entered", function(text) {
-  topicWrite(text);
-  set_topic_panel.hide();
-});
-
 var link_show_panel = require("sdk/panel").Panel({
   width: 400,
   height: 400,
@@ -84,6 +70,20 @@ var pgmod = pageMod.PageMod({
 
 //This functionality below is documented here:
 //http://stackoverflow.com/questions/32046399/firefox-jpm-emit-to-tab-from-outside-the-tab-call/32047579#32047579
+
+var set_topic_worker;
+setTopicPgMod = pageMod.PageMod({
+  include: data.url("set_topic.html"),
+  contentScriptFile: [data.url("jquery-3.0.0.min.js"),data.url("set_topic.js")],
+  onAttach: function onAttach(worker) {
+    set_topic_worker = worker;
+    checkSetTopic();
+    worker.port.on("topic_entered", function(text) {
+      topicWrite(text);
+      worker.tab.close();
+    });
+  }
+});
 
 var link_list_worker;
 
@@ -152,21 +152,10 @@ semanticPgMod = pageMod.PageMod({
   }
 });
 
-/* Set Topic Hotkeys*/
 var showSetTopicHotKey = Hotkey({
   combo: "accel-shift-o",
   onPress: function() {
-    set_topic_panel.show({
-      //This will show the panel under the addon button
-      position: button
-    });
-  }
-});
-
-var hideTopicHotKey = Hotkey({
-  combo: "accel-alt-shift-o",
-  onPress: function() {
-    set_topic_panel.hide();
+    tabs.open(data.url("set_topic.html"));
   }
 });
 
@@ -328,7 +317,7 @@ function checkSetTopic() {
   var current_topic_promise = readFile(check_current_topic_path);
   current_topic_promise.then(
       function onFulfill(read_topic) {
-        set_topic_panel.port.emit("curr_topic_contents", read_topic);
+        set_topic_worker.port.emit("curr_topic_contents", read_topic);
   });
 }
 
