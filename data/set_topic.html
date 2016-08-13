@@ -7,10 +7,22 @@
     <b>Your current topic is: <span id="topic_contents"></span></b>
     <br />
     <b>You can change the topic here:</b><br />
-    <input type="text" id="new_topic" style="width: 150px;"></input><br />
-    <b>Please enter a description for your topic (optional):</b><br />
-    <textarea id="change_topic_description"></textarea><br />
-    <button id="change_topic">Set New Topic</button>
+    <select id="new_topic_method">
+      <option disabled selected value> -- Topic Entry -- </option>
+      <option value="user_defined">Create New Topic</option>
+      <option value="existing">Return to Existing Topic</option>
+    </select>
+    <div id="create_new_topic" style="display: none;">
+      <b>Topic Name:</b><br />
+      <input type="text" id="new_topic" style="width: 150px;"></input><br />
+      <b>Please enter a description for your topic (optional):</b><br />
+      <textarea id="change_topic_description"></textarea><br />
+      <button id="change_topic">Set New Topic</button>
+    </div><!-- end create_new_topic -->
+    <div id="return_to_existing_topic" style="display: none;">
+      <select id="select_existing_topic" class="select2-basic-single" style="width: 50%;"></select><br />
+      <button id="return_to_topic">Return To Topic</button>
+    </div><!-- end return_to_existing_topic -->
   </form>
 </div><!-- end current_topic -->
 

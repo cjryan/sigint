@@ -74,11 +74,20 @@ var pgmod = pageMod.PageMod({
 var set_topic_worker;
 setTopicPgMod = pageMod.PageMod({
   include: data.url("set_topic.html"),
-  contentScriptFile: [data.url("jquery-3.0.0.min.js"),data.url("set_topic.js")],
+  contentStyleFile: data.url("select2.min.css"),
+  contentScriptFile: [data.url("jquery-3.0.0.min.js"),data.url("select2.full.min.js"),data.url("set_topic.js")],
   onAttach: function onAttach(worker) {
     set_topic_worker = worker;
     checkSetTopic();
     worker.port.on("topic_entered", function(topic_arr) {
+      topicWrite(topic_arr);
+      topicHistWrite(topic_arr);
+      worker.tab.close();
+    });
+    worker.port.on("fetch_topic_history", function() {
+      showTopicHistory(worker);
+    });
+    worker.port.on("return_to_topic", function(topic_arr) {
       topicWrite(topic_arr);
       worker.tab.close();
     });
@@ -152,14 +161,11 @@ semanticPgMod = pageMod.PageMod({
   }
 });
 
-var topic_hist_worker;
-
 topicHistPgMod = pageMod.PageMod({
   include: data.url("show_topic_history.html"),
   contentScriptFile: [data.url("jquery-3.0.0.min.js"),data.url("show_topic_history.js")],
   onAttach: function onAttach(worker) {
-    topic_hist_worker = worker;
-    showTopicHistory();
+    showTopicHistory(worker);
   }
 });
 
@@ -328,7 +334,6 @@ function linkMotherlodeCapture(link) {
 function topicWrite(topic_arr) {
   var current_topic_path = pathFinder('current_topic_json');
   writeFile(topic_arr[0], current_topic_path);
-  topicHistWrite(topic_arr);
 }
 
 //Check to see if a topic is currently set
@@ -376,7 +381,7 @@ function topicHistWrite(topic_to_archive) {
     });
 }
 
-function showTopicHistory() {
+function showTopicHistory(worker) {
   topic_hist_path = pathFinder('topic_hist_json');
   let hist_exist_promise = OS.File.exists(topic_hist_path);
   hist_exist_promise = hist_exist_promise.then(
@@ -386,7 +391,7 @@ function showTopicHistory() {
         hist_output_promise.then(
           function onFulfill(hist_pile){
             var all_hist_obj = JSON.parse(hist_pile);
-            topic_hist_worker.port.emit("send_hist_pile", all_hist_obj);
+            worker.port.emit("send_hist_pile", all_hist_obj);
           });
       } else {
         //TODO: Create a user-visible dialog that tells the user
