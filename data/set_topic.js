@@ -17,20 +17,24 @@ self.port.on("curr_topic_contents", function getTopicContents(topic) {
 });
 
 function setTopic() {
-  var topic_name = $('#topic_name').val();
+  var topic_name = $("#topic_name").val();
+  var topic_description = $("#topic_description").val();
+  var topic_arr = [topic_name, topic_description];
   if (!topic_name || 0 === topic_name.length) {
-    $('#topic_name').css("border-color","red");
+    $("#topic_name").css("border-color","red");
   } else {
-    self.port.emit("topic_entered", topic_name);
+    self.port.emit("topic_entered", topic_arr);
   }
 }
 
 function changeTopic() {
-  var change_topic_name = $('#new_topic').val();
+  var change_topic_name = $("#new_topic").val();
+  var change_topic_description = $("#change_topic_description").val();
+  var change_topic_arr = [change_topic_name, change_topic_description];
   if (!change_topic_name || 0 === change_topic_name.length) {
-    $('#new_topic').css("border-color","red");
+    $("#new_topic").css("border-color","red");
   } else {
-    self.port.emit("topic_entered", change_topic_name);
+    self.port.emit("topic_entered", change_topic_arr);
   }
 }
 

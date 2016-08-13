@@ -7,7 +7,9 @@
     <b>Your current topic is: <span id="topic_contents"></span></b>
     <br />
     <b>You can change the topic here:</b><br />
-    <input type="text" id="new_topic" style="width: 150px;"></input>
+    <input type="text" id="new_topic" style="width: 150px;"></input><br />
+    <b>Please enter a description for your topic (optional):</b><br />
+    <textarea id="change_topic_description"></textarea><br />
     <button id="change_topic">Set New Topic</button>
   </form>
 </div><!-- end current_topic -->
@@ -16,6 +18,8 @@
   <form action="#" onsubmit="setTopic();">
     <b>Please set a topic to start:</b><br />
     <input type="text" id="topic_name" style="width: 150px;"></input><br />
+    <b>Please enter a description for your topic (optional):</b><br />
+    <textarea id="topic_description"></textarea><br />
     <button id="set_topic">Set Topic</button>
   </form>
 </div><!-- end set_current_topic -->

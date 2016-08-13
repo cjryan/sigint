@@ -78,8 +78,8 @@ setTopicPgMod = pageMod.PageMod({
   onAttach: function onAttach(worker) {
     set_topic_worker = worker;
     checkSetTopic();
-    worker.port.on("topic_entered", function(text) {
-      topicWrite(text);
+    worker.port.on("topic_entered", function(topic_arr) {
+      topicWrite(topic_arr);
       worker.tab.close();
     });
   }
@@ -152,6 +152,17 @@ semanticPgMod = pageMod.PageMod({
   }
 });
 
+var topic_hist_worker;
+
+topicHistPgMod = pageMod.PageMod({
+  include: data.url("show_topic_history.html"),
+  contentScriptFile: [data.url("jquery-3.0.0.min.js"),data.url("show_topic_history.js")],
+  onAttach: function onAttach(worker) {
+    topic_hist_worker = worker;
+    showTopicHistory();
+  }
+});
+
 var showSetTopicHotKey = Hotkey({
   combo: "accel-shift-o",
   onPress: function() {
@@ -173,12 +184,19 @@ var showGraphHotKey = Hotkey({
   }
 });
 
-var showBridgeHotKey = Hotkey({
+var createBridgeHotKey = Hotkey({
   combo: "accel-shift-b",
   onPress: function() {
     //Immediately get the current page, where keypress was activated
     active_tab = tabs.activeTab.url;
     tabs.open(data.url("semantic_link.html"));
+  }
+});
+
+var showTopicHistoryHotKey = Hotkey({
+  combo: "accel-shift-h",
+  onPress: function() {
+    tabs.open(data.url("show_topic_history.html"));
   }
 });
 
@@ -280,6 +298,12 @@ function getCurrentTopic() {
   return current_topic;
 }
 
+function generateID() {
+  var rand_num = Math.random();
+  var id = base64.encode(rand_num.toString());
+  return id;
+}
+
 function linkMotherlodeCapture(link) {
   //TODO: add error checking to all of this!!
 
@@ -292,9 +316,7 @@ function linkMotherlodeCapture(link) {
   read_output_promise.then(
       function onFulfill(current_topic){
         //add a unique link identifier
-        rand_num = Math.random();
-        var id = base64.encode(rand_num.toString());
-        link["id"] = id;
+        link["id"] = generateID();
         link["curr_topic"] = current_topic;
         var json_out = link;
         var link_motherlode_file_path = pathFinder('link_motherlode_json');
@@ -303,10 +325,10 @@ function linkMotherlodeCapture(link) {
 }
 
 //Write current topic
-function topicWrite(topic) {
+function topicWrite(topic_arr) {
   var current_topic_path = pathFinder('current_topic_json');
-  writeFile(topic, current_topic_path);
-  topicHistWrite(topic);
+  writeFile(topic_arr[0], current_topic_path);
+  topicHistWrite(topic_arr);
 }
 
 //Check to see if a topic is currently set
@@ -328,6 +350,7 @@ function topicHistWrite(topic_to_archive) {
   let hist_exist_promise= OS.File.exists(path);
   hist_exist_promise.then(
     function onFulfill(exist) {
+      var id = generateID();
       if (exist) {
         //if it exists, get existing file, parse as json
         var hist_read_promise = readFile(path);
@@ -336,18 +359,43 @@ function topicHistWrite(topic_to_archive) {
             var hist_obj = JSON.parse(existing_hist);
             //hist_obj is the name of the parsed data object,
             //topic_history is the name of the json array created in the skeleton
-            hist_obj.topic_history.push(topic_to_archive);
+            var new_topic_obj = {};
+            new_topic_obj[id] = topic_to_archive;
+            hist_obj.topic_history.push(new_topic_obj);
             var new_hist_commit = JSON.stringify(hist_obj);
             writeFile(new_hist_commit, path);
         });
       } else {
         console.log("No topic history file found, dishing one up now...");
-        var skeleton = '{"topic_history":["' + topic_to_archive + '"]}'
+        var skeleton = '{"topic_history": [{"'+ id + '":["' + topic_to_archive[0] + '","' + topic_to_archive[1] + '"]}]}';
         writeFile(skeleton, path);
       }
     },
     function onReject(hist_write_reject) {
       console.warn('Could not find file: ' + hist_write_reject);
+    });
+}
+
+function showTopicHistory() {
+  topic_hist_path = pathFinder('topic_hist_json');
+  let hist_exist_promise = OS.File.exists(topic_hist_path);
+  hist_exist_promise = hist_exist_promise.then(
+    function onFulfill(histExist) {
+      if (histExist) {
+        var hist_output_promise = readFile(topic_hist_path);
+        hist_output_promise.then(
+          function onFulfill(hist_pile){
+            var all_hist_obj = JSON.parse(hist_pile);
+            topic_hist_worker.port.emit("send_hist_pile", all_hist_obj);
+          });
+      } else {
+        //TODO: Create a user-visible dialog that tells the user
+        //to create a topic and get going.
+        console.log("topic history not found.");
+      }
+    },
+    function onReject(reject_topic_info) {
+      console.warn('Could not get topic history: ' + reject_topic_info);
     });
 }
 
