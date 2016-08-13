@@ -26,6 +26,8 @@ You can also add an optional description to your topic, which may be useful in r
 
 Note! Do not be afraid to change your topic often; in fact, it is highly encouraged. Think of your topic as a Ctrl-S (Save) on a (Libre)Office document. Don't be afraid of being stuck on one monolithic topic - you can always return to your current one, but don't worry about branching out.
 
+To view currently saved topics and their descriptions, press ```ctrl-alt-h```.
+
 ###Capturing a link
 To save a link, press ```ctrl-alt```, and ```mouse left-click``` on the link at the same time. This will preserve the link, and its metadata (date/time, referring page, current page, link href attribute, and surrounding text).
 
