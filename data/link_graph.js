@@ -22,13 +22,13 @@ self.port.on("send_graph_data", function graphData(sorted_links) {
                   if (obj2.hasOwnProperty(prop2)) {
                     //console.log(prop2 + " = " + obj2[prop2]);
                     if (prop2 == "ref_page") {
-                      ref_page = obj2[prop2];
+                      ref_page = obj2[prop2].slice(0,15) + "..." + obj2[prop2].slice(-15,-1) ;
                     } else if (prop2 == "curr_page") {
-                      curr_page = obj2[prop2];
+                      curr_page = obj2[prop2].slice(0,15) + "..." + obj2[prop2].slice(-15,-1) ;
                     } else if (prop2 == "href_text") {
-                      href_text = obj2[prop2];
+                      href_text = obj2[prop2].slice(0,15) + "..." + obj2[prop2].slice(-15,-1) ;
                     } else if (prop2 == "link_text") {
-                      link_text = obj2[prop2];
+                      link_text = obj2[prop2].slice(0,15) + "..." + obj2[prop2].slice(-15,-1) ;
                     }
                   }
                 }
@@ -38,7 +38,7 @@ self.port.on("send_graph_data", function graphData(sorted_links) {
                 //if href_text is from a user selection, change the href_text
                 //to be user-readable
                 if (href_text == "User Highlighted Selection") {
-                  href_text = link_text.slice(0,30) + "...";
+                  href_text = link_text;
                 }
                 if (href_text == "Semantic Link") {
                   links.push({source: ref_page, target: curr_page, type: "semantic_link"});
