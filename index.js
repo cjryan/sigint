@@ -10,9 +10,10 @@ const {Cu} = require("chrome");
 const {TextDecoder, TextEncoder, OS} = Cu.import("resource://gre/modules/osfile.jsm", {});
 var base64 = require("sdk/base64");
 
-
-/* Generate a working directory for the add-on
+/*
+ * Generate a working directory for the add-on
  * so as not to make a mess of the user's profile directory
+ *
  */
 
 function createWorkingDirectory() {
@@ -31,6 +32,9 @@ function createWorkingDirectory() {
 
 createWorkingDirectory();
 
+/*
+ * Define panels and pagemods
+ */
 var link_show_panel = require("sdk/panel").Panel({
   width: 400,
   height: 400,
@@ -161,6 +165,10 @@ semanticPgMod = pageMod.PageMod({
   }
 });
 
+/**
+ *  Define Hotkeys
+ */
+
 topicHistPgMod = pageMod.PageMod({
   include: data.url("show_topic_history.html"),
   contentScriptFile: [data.url("jquery-3.0.0.min.js"),data.url("show_topic_history.js")],
@@ -221,7 +229,9 @@ var button = buttons.ActionButton({
   badge: 0
 });
 
-//read file
+/*
+ * Read in a generic file
+ */
 function readFile(input_file) {
   // This decoder can be reused for several reads
   let decoder = new TextDecoder();
@@ -242,7 +252,9 @@ function readFile(input_file) {
   return promise
 }
 
-//write file
+/*
+ * Write a generic file
+ */
 function writeFile(data, path) {
   // This encoder can be reused for several writes
   let encoder = new TextEncoder();
@@ -255,6 +267,9 @@ function writeFile(data, path) {
       {tmpPath: tmp_path, noOverwrite: false});
 }
 
+/*
+ * Collate and write links
+ */
 function linkWriter(data, path) {
   //First, check if a links motherlode file exists
   let link_exist_promise = OS.File.exists(path);
@@ -286,7 +301,9 @@ function linkWriter(data, path) {
   );
 }
 
-//default addon path
+/*
+ * Define the default addon path
+ */
 function pathFinder(filename) {
   // Get user's profile directory
   var sigint_dir = OS.Constants.Path.profileDir + "/sigint/";
@@ -294,6 +311,9 @@ function pathFinder(filename) {
   return full_path;
 }
 
+/*
+ * Find and return the currently active topic
+ */
 function getCurrentTopic() {
   var current_topic_path = pathFinder('current_topic_json');
   var read_output_promise = readFile(current_topic_path);
@@ -304,6 +324,9 @@ function getCurrentTopic() {
   return current_topic;
 }
 
+/*
+ * Generate a unique ID for sigint objects
+ */
 function generateID() {
   var rand_num = Math.random();
   var id = base64.encode(rand_num.toString());
@@ -330,13 +353,17 @@ function linkMotherlodeCapture(link) {
       });
 }
 
-//Write current topic
+/*
+ * Write the current topic to a file
+ */
 function topicWrite(topic_arr) {
   var current_topic_path = pathFinder('current_topic_json');
   writeFile(topic_arr[0], current_topic_path);
 }
 
-//Check to see if a topic is currently set
+/*
+ * Check to see if the current topic is set
+ */
 function checkSetTopic() {
   //Wait for the panel to open
   //TODO: error check if file actually exists
@@ -348,7 +375,9 @@ function checkSetTopic() {
   });
 }
 
-//create topic history
+/*
+ * Create a topic history object, and write it to a file
+ */
 function topicHistWrite(topic_to_archive) {
   //First, check if a topic history file already exists
   var path = pathFinder('topic_hist_json');
@@ -381,6 +410,9 @@ function topicHistWrite(topic_to_archive) {
     });
 }
 
+/*
+ * Find the current topic history, and return it
+ */
 function showTopicHistory(worker) {
   topic_hist_path = pathFinder('topic_hist_json');
   let hist_exist_promise = OS.File.exists(topic_hist_path);
@@ -404,7 +436,9 @@ function showTopicHistory(worker) {
     });
 }
 
-//Sort links for display in the link overview page
+/*
+ * Sort links for display in the link overview page
+ */
 function sortCurrentLinks(links_obj) {
   //first sort by topic, then by current site
   var sorted = {};
@@ -430,7 +464,9 @@ function sortCurrentLinks(links_obj) {
   return sorted;
 }
 
-//Return a list of links, to be displayed to the user
+/*
+ * Return a list of links, to be displayed to the user
+ */
 function getCurrentLinks() {
   motherlode_path = pathFinder('link_motherlode_json');
   let link_exist_promise = OS.File.exists(motherlode_path);
