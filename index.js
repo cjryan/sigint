@@ -554,6 +554,10 @@ function writeLinkEdits(edits) {
     });
 }
 
+
+/*
+ * Create a graph of links, as nodes, using d3js
+ */
 function graphRoutes() {
   motherlode_path = pathFinder('link_motherlode_json');
   let link_exist_promise = OS.File.exists(motherlode_path);
@@ -583,12 +587,18 @@ function graphRoutes() {
     });
 }
 
+/*
+ * Initiate the semantic bridge creation process
+ */
 function createSemanticBridge() {
   var current_tabs = getCurrentTabs();
   current_tabs.push(active_tab);
   semantic_link_worker.port.emit("current_tab_pile", current_tabs);
 }
 
+/*
+ * Return a list of current tabs open in the browser
+ */
 function getCurrentTabs() {
   var tab_arr = []
   for (let tab of tabs) {
