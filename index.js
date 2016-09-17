@@ -53,6 +53,7 @@ https://developer.mozilla.org/en-US/Add-ons/SDK/Guides/Content_Scripts/using_por
 So page-mod does not integrate the worker API directly: instead, each time a content script is attached to a page, the worker associated with the page is supplied to the page-mod in its onAttach function. By supplying a target for this function in the page-mod's constructor you can register to receive messages from the content script, and take a reference to the worker so as to emit messages to the content script.
 */
 //Modify the page to allow jquery, and link identification
+//Main page modification for link saving
 var pgmod = pageMod.PageMod({
   include: "*",
   contentScriptFile: [data.url("jquery-3.0.0.min.js"), data.url("link_click.js")],
