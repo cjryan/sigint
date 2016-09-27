@@ -22,12 +22,12 @@ function createWorkingDirectory() {
   var addon_path = OS.Path.join(profile_dir + "/sigint");
   make_dir_promise = OS.File.makeDir(addon_path, { ignoreExisting: false });
   make_dir_promise.then(
-      function onFulfill(create_dir) {
-        console.log("Successfully created: " + addon_path);
-      },
-      function onReject(reject_dir) {
-        console.warn("Could not create: " + reject_dir);
-      });
+    function onFulfill(create_dir) {
+      console.log("Successfully created: " + addon_path);
+    },
+    function onReject(reject_dir) {
+      console.warn("Could not create: " + reject_dir);
+    });
 }
 
 createWorkingDirectory();
@@ -44,8 +44,8 @@ var link_show_panel = require("sdk/panel").Panel({
 });
 
 link_show_panel.port.on("save_link_data", function(mod_link_data) {
-    link_show_panel.hide();
-    writeLinkEdits(mod_link_data);
+  link_show_panel.hide();
+  writeLinkEdits(mod_link_data);
 });
 
 /* From MDN docs on port communication:
