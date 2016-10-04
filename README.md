@@ -15,7 +15,7 @@ Similarly, tabs can be used as to-do lists, resulting in dozens or hundreds of o
 
 ##Getting Started
 ###Installation
-First, install the add-on. This can be done by cloning this repository and building it out, using the Firefox [jpm utility](https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Getting_Started_(jpm)). Please follow the 'Prerequisites' section of the link, and install the nodejs jpm utility.
+First, install the add-on. This can be done by installing the the signed .xpi file on the "Releases" link of the main page of the repository, or by cloning this repository and building it out, using the Firefox [jpm utility](https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Getting_Started_(jpm)). Please follow the 'Prerequisites' section of the link, and install the nodejs jpm utility.
 
 Once you've installed jpm, and cloned/downloaded the repository, run the jpm utility in the cloned/extracted directory, and run ```jpm xpi```. This will create a .xpi file for you to point the Firefox Add-on page to.
 
