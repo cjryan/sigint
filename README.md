@@ -9,7 +9,7 @@ One of the chief goals of sigint is to be as unobtrusive as possible. The workfl
 In doing research, it is oftentimes problematic to trace the source of a document, a note, an anecdote, or a bit of information after some time has passed. With sigint, you can create a project, and keep track of your research thread, from inception to closure. You can also create tags to keep track of your current progress.
 
 ##Context
-Many times, links are woven in as part of a surrounding text, [like so](https://github.com/cjryan/sigint). Long after that link has been bookmarked or written down, it is easy to forget why you saved that link or what you downloaded from it. sigint will allow you to save the surrounding text of a link, as part of your thread.
+Many times, links are woven in as part of a surrounding text, [like so](https://github.com/cjryan/sigint). Long after that link has been bookmarked or written down, it is easy to forget why you saved that link or what you downloaded from it. sigint will allow you to save the surrounding text of a link, the date and time, the referring page (if one exists), and other information as part of your thread.
 
 Similarly, tabs can be used as to-do lists, resulting in dozens or hundreds of open tabs. Sigint will help save your tabs, links, and research to reduce your browser load.
 
